@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C65E7C80-4CAF-488C-99A9-DCEF302D6F5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMedicalRecords.API", "src\eMedicalRecords.API\eMedicalRecords.API.csproj", "{BF7D7CF4-06BF-4179-B681-9C103D4FF1FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMedicalRecords.Infrastructure", "src\eMedicalRecords.Infrastructure\eMedicalRecords.Infrastructure.csproj", "{FDEC9C1A-D49D-457A-94A3-ABC3E3CCE443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMedicalRecords.Domain", "src\eMedicalRecords.Domain\eMedicalRecords.Domain.csproj", "{7F761535-404E-4942-ACDF-37DEDA048B05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF7D7CF4-06BF-4179-B681-9C103D4FF1FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF7D7CF4-06BF-4179-B681-9C103D4FF1FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF7D7CF4-06BF-4179-B681-9C103D4FF1FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF7D7CF4-06BF-4179-B681-9C103D4FF1FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDEC9C1A-D49D-457A-94A3-ABC3E3CCE443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDEC9C1A-D49D-457A-94A3-ABC3E3CCE443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDEC9C1A-D49D-457A-94A3-ABC3E3CCE443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDEC9C1A-D49D-457A-94A3-ABC3E3CCE443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F761535-404E-4942-ACDF-37DEDA048B05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F761535-404E-4942-ACDF-37DEDA048B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F761535-404E-4942-ACDF-37DEDA048B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F761535-404E-4942-ACDF-37DEDA048B05}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF7D7CF4-06BF-4179-B681-9C103D4FF1FF} = {C65E7C80-4CAF-488C-99A9-DCEF302D6F5A}
+		{FDEC9C1A-D49D-457A-94A3-ABC3E3CCE443} = {C65E7C80-4CAF-488C-99A9-DCEF302D6F5A}
+		{7F761535-404E-4942-ACDF-37DEDA048B05} = {C65E7C80-4CAF-488C-99A9-DCEF302D6F5A}
+	EndGlobalSection
+EndGlobal
