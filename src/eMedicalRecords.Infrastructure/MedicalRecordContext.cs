@@ -48,7 +48,7 @@ namespace eMedicalRecords.Infrastructure
             return true;
         }
         
-        public async Task<IDbContextTransaction> StartTransactionAsync()
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             if (_currentTransaction != null) return null;
             _currentTransaction = await Database.BeginTransactionAsync();

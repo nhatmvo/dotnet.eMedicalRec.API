@@ -34,5 +34,24 @@ namespace eMedicalRecords.API
             
             return services;
         }
+
+        public static IServiceCollection AddCustomMvc(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddControllers();
+            return services;
+        } 
+
+        public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            return services;
+        }
+        
+        public static IServiceCollection AddCustomConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions();
+            services.Configure<DbConfiguration>(configuration);
+            return services;
+        }
     }
 }

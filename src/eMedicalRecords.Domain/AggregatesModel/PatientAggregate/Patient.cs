@@ -6,6 +6,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.PatientAggregate
 {
     public class Patient : Entity, IAggregateRoot
     {
+        public string PatientNo { get; set; }
         private string _identityNo;
         private string _firstName;
         private string _lastName;
@@ -28,9 +29,10 @@ namespace eMedicalRecords.Domain.AggregatesModel.PatientAggregate
             _hasInsurance = false;
         }
 
-        public Patient(string identityNo, int identityTypeId, string firstName, string lastName, string middleName, string email, string phoneNumber,
+        public Patient(string patientIdentifier, string identityNo, int identityTypeId, string firstName, string lastName, string middleName, string email, string phoneNumber,
             DateTime dateOfBirth, PatientAddress patientAddress, bool hasInsurance, string description)
         {
+            PatientNo = patientIdentifier;
             _identityNo = identityNo;
             _identityTypeId = identityTypeId;
             _firstName = firstName;
@@ -43,12 +45,12 @@ namespace eMedicalRecords.Domain.AggregatesModel.PatientAggregate
             _hasInsurance = hasInsurance;
             _description = description;
             
-            AddPatientAddedDomainEvent(identityNo, email);
+            AddPatientAddedDomainEvent(PatientNo, _identityNo, _email);
         }
 
-        private void AddPatientAddedDomainEvent(string identityNo, string email)
+        private void AddPatientAddedDomainEvent(string patientNo, string identityNo, string email)
         {
-            var patientAddedDomainEvent = new PatientAddedDomainEvent(this, identityNo, email);
+            var patientAddedDomainEvent = new PatientAddedDomainEvent(this, patientNo, identityNo, email);
             AddDomainEvent(patientAddedDomainEvent);
         }
 

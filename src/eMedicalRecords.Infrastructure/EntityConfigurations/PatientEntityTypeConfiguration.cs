@@ -11,8 +11,16 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
         {
             builder.ToTable("patients");
 
+            builder.Ignore(b => b.DomainEvents);
+
             builder.HasKey(b => b.Id);
 
+            builder.Property(p => p.Id)
+                .HasColumnName("id");
+
+            builder.HasIndex(b => b.PatientNo)
+                .IsUnique();
+            
             builder.HasIndex("_identityNo")
                 .IsUnique();
             

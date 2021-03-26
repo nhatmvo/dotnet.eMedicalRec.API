@@ -9,7 +9,7 @@ namespace eMedicalRecords.Domain.Events
         public string IdentityNo { get; }
         public string Email { get; }
 
-        public PatientAddedDomainEvent(Patient patient, string identityNo, string email)
+        public PatientAddedDomainEvent(Patient patient, string patientNo, string identityNo, string email)
         {
             Patient = patient;
             IdentityNo = identityNo;
