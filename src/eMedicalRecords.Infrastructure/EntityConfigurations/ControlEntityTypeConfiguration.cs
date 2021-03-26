@@ -28,7 +28,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("record_attribute_id")
                 .IsRequired();
 
-            builder.HasOne(b => b.RecordAttribute)
+            builder.HasOne(b => b.Section)
                 .WithMany()
                 .HasForeignKey("_recordAttributeId");
             

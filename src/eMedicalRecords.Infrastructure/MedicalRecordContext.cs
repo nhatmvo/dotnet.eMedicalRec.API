@@ -1,8 +1,14 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
+using eMedicalRecords.Infrastructure.Configurations;
+using eMedicalRecords.Infrastructure.EntityConfigurations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace eMedicalRecords.Infrastructure
 {
@@ -20,7 +26,16 @@ namespace eMedicalRecords.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.ApplyConfiguration(new ControlEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ControlTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new DocumentEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new EntryEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new HeadingSetEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new HeadingEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new SectionEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new SectionDataEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new IdentityTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
         }
 
         public bool HasActiveTransaction() => _currentTransaction != null;
@@ -67,6 +82,32 @@ namespace eMedicalRecords.Infrastructure
                 await _currentTransaction.DisposeAsync();
                 _currentTransaction = null;
             }
+        }
+    }
+    
+    public class MedicalRecordContextDesignFactory : IDesignTimeDbContextFactory<MedicalRecordContext>
+    {
+        public MedicalRecordContext CreateDbContext(string[] args)
+        {
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../eMedicalRecords.API"))
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var dbConfiguration = config.Get<DbConfiguration>();
+            var builder = new NpgsqlConnectionStringBuilder()
+            {
+                Host = dbConfiguration.Hostname,
+                Database = dbConfiguration.Database,
+                Username = dbConfiguration.Username,
+                Password = dbConfiguration.Password,
+                Port = int.Parse(dbConfiguration.Port)
+            };
+                
+            var optionsBuilder = new DbContextOptionsBuilder<MedicalRecordContext>()
+                .UseNpgsql(builder.ConnectionString);
+
+            return new MedicalRecordContext(optionsBuilder.Options);
         }
     }
 }

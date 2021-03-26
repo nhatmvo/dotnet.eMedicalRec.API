@@ -8,7 +8,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         private string _name;
 
         private Guid _recordAttributeId;
-        public RecordAttribute RecordAttribute { get; private set; }
+        public Section Section { get; private set; }
 
         public Control(Guid recordAttributeId, string name)
         {

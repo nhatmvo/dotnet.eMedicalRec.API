@@ -8,6 +8,9 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
     {
         private DateTime _createdDate;
         private DateTime? _updatedDate;
+
+        public Guid GetPatientId => _patientId;
+        private Guid _patientId;
         
         private readonly List<Entry> _documentEntries;
 
@@ -22,6 +25,11 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         public void AddEntry(Entry entry)
         {
             _documentEntries.Add(entry);
+        }
+
+        public void SetPatientId(Guid patientId)
+        {
+            _patientId = patientId;
         }
     }
 }

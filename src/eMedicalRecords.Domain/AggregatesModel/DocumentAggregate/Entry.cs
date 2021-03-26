@@ -12,9 +12,9 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         private string _name;
         private string _description;
 
-        private List<RecordAttributeData> _recordValues;
+        private List<SectionData> _recordValues;
 
-        public IReadOnlyCollection<RecordAttributeData> RecordValues => _recordValues.AsReadOnly();
+        public IReadOnlyCollection<SectionData> RecordValues => _recordValues.AsReadOnly();
 
         protected Entry() { }
 
@@ -25,10 +25,10 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
             _description = description;
         }
 
-        public void AddRecordAttributeDataForEntry(RecordAttributeData data)
+        public void AddRecordAttributeDataForEntry(SectionData data)
         {
             data.Validation();
-            _recordValues ??= new List<RecordAttributeData>();
+            _recordValues ??= new List<SectionData>();
             _recordValues.Add(data);
         }
 

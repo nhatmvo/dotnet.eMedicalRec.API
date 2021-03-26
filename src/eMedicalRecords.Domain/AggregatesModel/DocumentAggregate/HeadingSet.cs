@@ -5,10 +5,10 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
 {
     public class HeadingSet : Entity
     {
-        private readonly List<Heading> _headings;
         private bool _isDefault;
         private string _name;
         
+        private readonly List<Heading> _headings;
         public IReadOnlyCollection<Heading> Headings => _headings.AsReadOnly();
 
         protected HeadingSet()

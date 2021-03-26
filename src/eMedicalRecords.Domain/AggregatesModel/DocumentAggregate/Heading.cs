@@ -8,12 +8,12 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         private string _name;
         private string _description;
         
-        private List<RecordAttribute> _recordAttributes;
-        public IReadOnlyCollection<RecordAttribute> RecordAttributes => _recordAttributes.AsReadOnly();
+        private List<Section> _recordAttributes;
+        public IReadOnlyCollection<Section> RecordAttributes => _recordAttributes.AsReadOnly();
 
         protected Heading()
         {
-            _recordAttributes = new List<RecordAttribute>();
+            _recordAttributes = new List<Section>();
         }
         
         public Heading(string name, string description)
