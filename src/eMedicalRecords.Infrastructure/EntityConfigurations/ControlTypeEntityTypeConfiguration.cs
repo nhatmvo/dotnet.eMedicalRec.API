@@ -1,9 +1,10 @@
-using eMedicalRecords.Domain.AggregatesModel.DocumentAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eMedicalRecords.Infrastructure.EntityConfigurations
 {
+    using Domain.AggregatesModel.TemplateAggregate;
+
     public class ControlTypeEntityTypeConfiguration : IEntityTypeConfiguration<ControlType>
     {
         public void Configure(EntityTypeBuilder<ControlType> builder)

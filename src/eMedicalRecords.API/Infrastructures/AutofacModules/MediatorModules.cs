@@ -9,12 +9,11 @@ namespace eMedicalRecords.API.Infrastructures.AutofacModules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterGeneric(typeof(TransactionPipelineBehavior<,>))
-                .As(typeof(IPipelineBehavior<,>))
-                .InstancePerRequest();
+                .As(typeof(IPipelineBehavior<,>));
 
             builder.RegisterGeneric(typeof(ValidationPipelineBehavior<,>))
-                .As(typeof(IPipelineBehavior<,>))
-                .InstancePerRequest();
+                .As(typeof(IPipelineBehavior<,>));
+
         }
     }
 }

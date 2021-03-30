@@ -24,6 +24,8 @@ namespace eMedicalRecords.Domain.AggregatesModel.PatientAggregate
         
         public string FullName => _lastName + ' ' + _middleName + ' ' + _firstName;
 
+        public override Guid Id { get; protected set; } = Guid.NewGuid();
+
         protected Patient()
         {
             _hasInsurance = false;

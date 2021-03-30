@@ -1,15 +1,16 @@
 using System;
 using eMedicalRecords.Domain.AggregatesModel.DocumentAggregate;
+using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eMedicalRecords.Infrastructure.EntityConfigurations
 {
-    public class SectionDataEntityTypeConfiguration : IEntityTypeConfiguration<SectionData>
+    public class EntryDataEntityTypeConfiguration : IEntityTypeConfiguration<EntryData>
     {
-        public void Configure(EntityTypeBuilder<SectionData> builder)
+        public void Configure(EntityTypeBuilder<EntryData> builder)
         {
-            builder.ToTable("mre_section_data");
+            builder.ToTable("mre_entry_data");
 
             builder.HasKey(b => b.Id);
             builder.Property(b => b.Id).HasColumnName("id");
@@ -29,7 +30,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("value")
                 .IsRequired();
 
-            builder.HasOne(b => b.Section)
+            builder.HasOne<Section>()
                 .WithMany()
                 .HasForeignKey("_sectionId")
                 .IsRequired();

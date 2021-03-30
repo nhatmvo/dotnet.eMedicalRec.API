@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using eMedicalRecords.Domain.AggregatesModel.PatientAggregate;
 using MediatR;
 
-namespace eMedicalRecords.API.Applications.Commands
+namespace eMedicalRecords.API.Applications.Commands.Patient
 {
     public class UpdatePatientCommandHandler : IRequestHandler<UpdatePatientCommand, bool>
     {

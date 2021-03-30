@@ -1,5 +1,7 @@
+using System.Reflection;
 using Autofac;
 using eMedicalRecords.API.Infrastructures.AutofacModules;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +23,7 @@ namespace eMedicalRecords.API
         {
             services.AddCustomMvc(Configuration)
                 .AddCustomConfiguration(Configuration)
+                .AddMediatR(Assembly.GetExecutingAssembly())
                 .AddCustomDbContext(Configuration)
                 .AddCustomHealthCheck(Configuration);
 

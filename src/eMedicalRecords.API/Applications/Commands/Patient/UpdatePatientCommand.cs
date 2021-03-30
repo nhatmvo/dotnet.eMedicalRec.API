@@ -2,7 +2,7 @@ using System;
 using System.Runtime.Serialization;
 using MediatR;
 
-namespace eMedicalRecords.API.Applications.Commands
+namespace eMedicalRecords.API.Applications.Commands.Patient
 {
     public class UpdatePatientCommand : IRequest<bool>
     {

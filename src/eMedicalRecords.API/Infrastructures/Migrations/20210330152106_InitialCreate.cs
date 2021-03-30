@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace eMedicalRecords.Infrastructure.Migrations
@@ -36,6 +37,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(nullable: false),
+                    PatientId = table.Column<Guid>(nullable: false),
                     created_date = table.Column<DateTime>(nullable: false),
                     updated_date = table.Column<DateTime>(nullable: true)
                 },
@@ -45,7 +47,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "mre_heading_sets",
+                name: "mre_template",
                 columns: table => new
                 {
                     id = table.Column<Guid>(nullable: false),
@@ -54,7 +56,39 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_mre_heading_sets", x => x.id);
+                    table.PrimaryKey("PK_mre_template", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "patients",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(nullable: false),
+                    PatientNo = table.Column<string>(nullable: true),
+                    PatientAddress_Country = table.Column<string>(nullable: true),
+                    PatientAddress_City = table.Column<string>(nullable: true),
+                    PatientAddress_District = table.Column<string>(nullable: true),
+                    PatientAddress_AddressLine = table.Column<string>(nullable: true),
+                    IdentityTypeId = table.Column<int>(nullable: true),
+                    date_of_birth = table.Column<DateTime>(nullable: false),
+                    description = table.Column<string>(nullable: false),
+                    email = table.Column<string>(nullable: false),
+                    first_name = table.Column<string>(nullable: false),
+                    has_insurance = table.Column<bool>(nullable: false),
+                    identity_no = table.Column<string>(nullable: false),
+                    last_name = table.Column<string>(nullable: false),
+                    middle_name = table.Column<string>(nullable: true),
+                    phone_number = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_patients", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_patients_identity_type_IdentityTypeId",
+                        column: x => x.IdentityTypeId,
+                        principalTable: "identity_type",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -62,10 +96,11 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    heading_set_id = table.Column<Guid>(nullable: false),
                     DocumentId = table.Column<Guid>(nullable: true),
                     description = table.Column<string>(nullable: true),
-                    name = table.Column<string>(nullable: false)
+                    heading_set_id = table.Column<Guid>(nullable: false),
+                    name = table.Column<string>(nullable: false),
+                    _templateId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -77,31 +112,11 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_mr_entries_mre_heading_sets_heading_set_id",
-                        column: x => x.heading_set_id,
-                        principalTable: "mre_heading_sets",
+                        name: "FK_mr_entries_mre_template__templateId",
+                        column: x => x._templateId,
+                        principalTable: "mre_template",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "mre_headings",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(nullable: false),
-                    HeadingSetId = table.Column<Guid>(nullable: true),
-                    description = table.Column<string>(nullable: false),
-                    name = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_mre_headings", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_mre_headings_mre_heading_sets_HeadingSetId",
-                        column: x => x.HeadingSetId,
-                        principalTable: "mre_heading_sets",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,20 +124,21 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(nullable: false),
-                    parent_section_id = table.Column<Guid>(nullable: true),
                     control_type_id = table.Column<int>(nullable: false),
-                    HeadingId = table.Column<Guid>(nullable: true),
+                    TemplateId = table.Column<Guid>(nullable: true),
                     description = table.Column<string>(nullable: true),
                     name = table.Column<string>(nullable: false),
+                    options = table.Column<List<string>>(nullable: true),
+                    parent_section_id = table.Column<Guid>(nullable: true),
                     tooltip = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_mre_sections", x => x.id);
                     table.ForeignKey(
-                        name: "FK_mre_sections_mre_headings_HeadingId",
-                        column: x => x.HeadingId,
-                        principalTable: "mre_headings",
+                        name: "FK_mre_sections_mre_template_TemplateId",
+                        column: x => x.TemplateId,
+                        principalTable: "mre_template",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -159,32 +175,32 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "mre_section_data",
+                name: "mre_entry_data",
                 columns: table => new
                 {
                     id = table.Column<Guid>(nullable: false),
-                    section_id = table.Column<Guid>(nullable: false),
                     entry_id = table.Column<Guid>(nullable: false),
                     EntryId1 = table.Column<Guid>(nullable: true),
+                    section_id = table.Column<Guid>(nullable: false),
                     value = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_mre_section_data", x => x.id);
+                    table.PrimaryKey("PK_mre_entry_data", x => x.id);
                     table.ForeignKey(
-                        name: "FK_mre_section_data_mr_entries_EntryId1",
+                        name: "FK_mre_entry_data_mr_entries_EntryId1",
                         column: x => x.EntryId1,
                         principalTable: "mr_entries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_mre_section_data_mr_entries_entry_id",
+                        name: "FK_mre_entry_data_mr_entries_entry_id",
                         column: x => x.entry_id,
                         principalTable: "mr_entries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_mre_section_data_mre_sections_section_id",
+                        name: "FK_mre_entry_data_mre_sections_section_id",
                         column: x => x.section_id,
                         principalTable: "mre_sections",
                         principalColumn: "id",
@@ -197,9 +213,9 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 column: "DocumentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_mr_entries_heading_set_id",
+                name: "IX_mr_entries__templateId",
                 table: "mr_entries",
-                column: "heading_set_id");
+                column: "_templateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_mre_control_record_attribute_id",
@@ -207,29 +223,24 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 column: "record_attribute_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_mre_headings_HeadingSetId",
-                table: "mre_headings",
-                column: "HeadingSetId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_mre_section_data_EntryId1",
-                table: "mre_section_data",
+                name: "IX_mre_entry_data_EntryId1",
+                table: "mre_entry_data",
                 column: "EntryId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_mre_section_data_entry_id",
-                table: "mre_section_data",
+                name: "IX_mre_entry_data_entry_id",
+                table: "mre_entry_data",
                 column: "entry_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_mre_section_data_section_id",
-                table: "mre_section_data",
+                name: "IX_mre_entry_data_section_id",
+                table: "mre_entry_data",
                 column: "section_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_mre_sections_HeadingId",
+                name: "IX_mre_sections_TemplateId",
                 table: "mre_sections",
-                column: "HeadingId");
+                column: "TemplateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_mre_sections_control_type_id",
@@ -240,18 +251,35 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 name: "IX_mre_sections_parent_section_id",
                 table: "mre_sections",
                 column: "parent_section_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_patients_IdentityTypeId",
+                table: "patients",
+                column: "IdentityTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_patients_PatientNo",
+                table: "patients",
+                column: "PatientNo",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_patients_identity_no",
+                table: "patients",
+                column: "identity_no",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "identity_type");
-
-            migrationBuilder.DropTable(
                 name: "mre_control");
 
             migrationBuilder.DropTable(
-                name: "mre_section_data");
+                name: "mre_entry_data");
+
+            migrationBuilder.DropTable(
+                name: "patients");
 
             migrationBuilder.DropTable(
                 name: "mr_entries");
@@ -260,16 +288,16 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 name: "mre_sections");
 
             migrationBuilder.DropTable(
+                name: "identity_type");
+
+            migrationBuilder.DropTable(
                 name: "mr_documents");
 
             migrationBuilder.DropTable(
-                name: "mre_headings");
+                name: "mre_template");
 
             migrationBuilder.DropTable(
                 name: "control_types");
-
-            migrationBuilder.DropTable(
-                name: "mre_heading_sets");
         }
     }
 }

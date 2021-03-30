@@ -1,12 +1,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using eMedicalRecords.Domain.AggregatesModel.PatientAggregate;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace eMedicalRecords.API.Applications.Commands
+namespace eMedicalRecords.API.Applications.Commands.Patient
 {
+    using Domain.AggregatesModel.PatientAggregate;
     public class CreatePatientCommandHandler : IRequestHandler<CreatePatientCommand, bool>
     {
         private readonly IPatientRepository _patientRepository;
@@ -37,6 +37,8 @@ namespace eMedicalRecords.API.Applications.Commands
                 request.HasInsurance, request.Description);
 
             await _patientRepository.AddAsync(patient);
+            await _patientRepository.UnitOfWork
+                .SaveEntitiesAsync(cancellationToken);
             return true;
         }
 

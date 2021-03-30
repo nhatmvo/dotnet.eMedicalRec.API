@@ -6,29 +6,29 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
 {
     public class Entry : Entity
     {
-        private Guid _headingSetId;
-        public HeadingSet HeadingSet { get; private set; }
+        private Guid _templateId;
 
         private string _name;
         private string _description;
+        public override Guid Id { get; protected set; } = Guid.NewGuid();
 
-        private List<SectionData> _recordValues;
+        private List<EntryData> _recordValues;
 
-        public IReadOnlyCollection<SectionData> RecordValues => _recordValues.AsReadOnly();
+        public IReadOnlyCollection<EntryData> RecordValues => _recordValues.AsReadOnly();
 
         protected Entry() { }
 
-        public Entry(Guid headingSetId, string name, string description)
+        public Entry(Guid templateId, string name, string description)
         {
-            _headingSetId = headingSetId;
+            _templateId = templateId;
             _name = name ?? DateTime.UtcNow.ToString("d");
             _description = description;
         }
 
-        public void AddRecordAttributeDataForEntry(SectionData data)
+        public void AddEntryData(EntryData data)
         {
             data.Validation();
-            _recordValues ??= new List<SectionData>();
+            _recordValues ??= new List<EntryData>();
             _recordValues.Add(data);
         }
 

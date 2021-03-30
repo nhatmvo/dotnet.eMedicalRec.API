@@ -23,7 +23,7 @@ namespace eMedicalRecords.API.Applications.Behaviors
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             var response = default(TResponse);
-            // TODO: Create GetDynamicTypeName function in order to get generic params name
+            // TODO: CreateDocumentCommand GetDynamicTypeName function in order to get generic params name
             var typeName = string.Empty;
             try
             {
@@ -43,6 +43,8 @@ namespace eMedicalRecords.API.Applications.Behaviors
 
                     _logger.LogInformation("----- Commit transaction {TransactionId} for {CommandName}",
                         transaction.TransactionId, typeName);
+                    
+                    await _context.CommitTransactionAsync(transaction);
 
                 });
                 return response;

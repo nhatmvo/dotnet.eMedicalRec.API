@@ -1,5 +1,6 @@
 using System;
-using eMedicalRecords.Domain.AggregatesModel.DocumentAggregate;
+using System.Collections.Generic;
+using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +13,8 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
             builder.ToTable("mre_sections");
 
             builder.HasKey(b => b.Id);
+
+            builder.Ignore(b => b.DomainEvents);
 
             builder.Property(b => b.Id)
                 .HasColumnName("id");
@@ -41,8 +44,13 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("description")
                 .IsRequired(false);
 
-            builder.HasOne(b => b.ParentSection)
-                .WithMany()
+            builder.Property<List<string>>("_options")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("options")
+                .IsRequired(false);
+
+            builder.HasMany(b => b.ChildSections)
+                .WithOne()
                 .HasForeignKey("_parentSectionId");
 
             builder.HasOne(b => b.ControlType)

@@ -1,6 +1,11 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using eMedicalRecords.Domain.AggregatesModel.DocumentAggregate;
+using eMedicalRecords.Domain.AggregatesModel.PatientAggregate;
+using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
+using eMedicalRecords.Domain.SeedWorks;
 using eMedicalRecords.Infrastructure.Configurations;
 using eMedicalRecords.Infrastructure.EntityConfigurations;
 using MediatR;
@@ -12,10 +17,22 @@ using Npgsql;
 
 namespace eMedicalRecords.Infrastructure
 {
-    public class MedicalRecordContext : DbContext
+    public class MedicalRecordContext : DbContext, IUnitOfWork
     {
         private IDbContextTransaction _currentTransaction;
         private readonly IMediator _mediator;
+        
+        public DbSet<Control> Controls { get; set; }
+        public DbSet<ControlType> ControlTypes { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<Entry> Entries { get; set; }
+        public DbSet<EntryData> EntryData { get; set; }
+        public DbSet<Template> Templates { get; set; }
+        public DbSet<Section> Sections { get; set; }
+        public DbSet<EntryData> SectionData { get; set; }
+        public DbSet<IdentityType> IdentityTypes { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+        
         
         public MedicalRecordContext(DbContextOptions<MedicalRecordContext> options) : base(options) { }
 
@@ -30,10 +47,9 @@ namespace eMedicalRecords.Infrastructure
             modelBuilder.ApplyConfiguration(new ControlTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new DocumentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new EntryEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new HeadingSetEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new HeadingEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SectionEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new SectionDataEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new EntryDataEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new IdentityTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
         }
@@ -82,6 +98,13 @@ namespace eMedicalRecords.Infrastructure
                 await _currentTransaction.DisposeAsync();
                 _currentTransaction = null;
             }
+        }
+
+        public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken)
+        {
+            // await _mediator.DispatchDomainEventsAsync(this);
+            await base.SaveChangesAsync(cancellationToken);
+            return true;
         }
     }
     
