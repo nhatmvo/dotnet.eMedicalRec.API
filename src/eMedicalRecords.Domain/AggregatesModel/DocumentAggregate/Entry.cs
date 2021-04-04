@@ -25,12 +25,5 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
             _description = description;
         }
 
-        public void AddEntryData(EntryData data)
-        {
-            data.Validation();
-            _recordValues ??= new List<EntryData>();
-            _recordValues.Add(data);
-        }
-
     }
 }

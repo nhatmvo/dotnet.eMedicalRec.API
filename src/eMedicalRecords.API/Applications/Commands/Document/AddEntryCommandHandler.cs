@@ -1,7 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using eMedicalRecords.Domain.AggregatesModel.DocumentAggregate;
+using eMedicalRecords.Infrastructure.Idempotency;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace eMedicalRecords.API.Applications.Commands.Document
 {
@@ -24,6 +26,19 @@ namespace eMedicalRecords.API.Applications.Commands.Document
                 .UnitOfWork
                 .SaveEntitiesAsync(cancellationToken);
 
+            return true;
+        }
+    }
+    
+    public class AddEntryIdentifiedCommandHandler : IdentifiedCommandHandler<AddEntryCommand, bool>
+    {
+        public AddEntryIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
+            ILogger<AddEntryIdentifiedCommandHandler> logger) : base(mediator, requestManager, logger)
+        {
+        }
+
+        protected override bool CreateResultForDuplicateRequest()
+        {
             return true;
         }
     }

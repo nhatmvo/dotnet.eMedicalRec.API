@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using eMedicalRecords.Infrastructure.Idempotency;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -47,10 +48,24 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
             while (true)
             {
                 var potentialIdentifier = new Random().Next(100000000).ToString("D8");
-                var existingPatient = await _patientRepository.FindByPatientNo(potentialIdentifier);
+                var existingPatient = await _patientRepository.FindPatientByPatientNo(potentialIdentifier);
                 if (existingPatient == null)
                     return potentialIdentifier;
             }
+        }
+    }
+    
+    public class CreatePatientIdentifiedCommandHandler : IdentifiedCommandHandler<CreatePatientCommand, bool>
+    {
+        public CreatePatientIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
+            ILogger<CreatePatientIdentifiedCommandHandler> logger) : base(mediator, requestManager,
+            logger)
+        {
+        }
+
+        protected override bool CreateResultForDuplicateRequest()
+        {
+            return true;
         }
     }
 }

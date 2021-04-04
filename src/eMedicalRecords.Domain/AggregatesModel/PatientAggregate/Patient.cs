@@ -56,5 +56,10 @@ namespace eMedicalRecords.Domain.AggregatesModel.PatientAggregate
             AddDomainEvent(patientAddedDomainEvent);
         }
 
+        public void UpdatePatientInformation()
+        {
+            
+        }
+
     }
 }

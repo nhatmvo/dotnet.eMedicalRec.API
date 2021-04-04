@@ -35,7 +35,8 @@ namespace eMedicalRecords.Infrastructure.Repositories
         public async Task<List<Document>> FindDocumentsByPatientId(Guid patientId)
         {
             var documentsToFind = await _context.Documents
-                .Where(d => d.PatientId == patientId).ToListAsync();
+                .Where(d => EF.Property<Guid>(d, "_patientId") == patientId)
+                .ToListAsync();
             return documentsToFind;
         }
 

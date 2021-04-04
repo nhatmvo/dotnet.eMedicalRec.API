@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using eMedicalRecords.Infrastructure.Idempotency;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace eMedicalRecords.API.Applications.Commands.Template
 {
-    
-    using Domain.AggregatesModel.DocumentAggregate;
     using Domain.AggregatesModel.TemplateAggregate;
     
     public class CreateTemplateCommandHandler : IRequestHandler<CreateTemplateCommand, bool>
@@ -26,8 +26,8 @@ namespace eMedicalRecords.API.Applications.Commands.Template
             headingSet.AddSections(AddSectionsAndItsChildFromRequest(request.SectionRequests));
             
             await _templateRepository.AddTemplate(headingSet);
-            await _templateRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
-            return true;
+            return await _templateRepository.UnitOfWork
+                .SaveEntitiesAsync(cancellationToken);
         }
 
         private List<Section> AddSectionsAndItsChildFromRequest(List<SectionRequest> sections, Guid? parentSectionId = null)
@@ -44,6 +44,20 @@ namespace eMedicalRecords.API.Applications.Commands.Template
                 }
             }
             return result;
+        }
+    }
+    
+    public class CreateTemplateIdentifiedCommandHandler : IdentifiedCommandHandler<CreateTemplateCommand, bool>
+    {
+        public CreateTemplateIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
+            ILogger<CreateTemplateIdentifiedCommandHandler> logger) : base(mediator, requestManager,
+            logger)
+        {
+        }
+
+        protected override bool CreateResultForDuplicateRequest()
+        {
+            return true;
         }
     }
 }

@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
 using eMedicalRecords.Domain.SeedWorks;
+using Microsoft.EntityFrameworkCore;
 
 namespace eMedicalRecords.Infrastructure.Repositories
 {
@@ -19,6 +23,22 @@ namespace eMedicalRecords.Infrastructure.Repositories
         {
             var entry = await _context.Templates.AddAsync(template);
             return entry.Entity;
+        }
+
+        public Task<List<string>> GetAvailableSectionOptions(Guid sectionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ControlBase> GetControlTypeBySectionId(Guid sectionId)
+        {
+            var text = await _context.Controls.OfType<ControlText>()
+                .FirstOrDefaultAsync(p => p.SectionId == sectionId);
+            if (text != null)
+                return text;
+
+            throw new NotImplementedException();
+
         }
     }
 }

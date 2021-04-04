@@ -9,7 +9,7 @@ namespace eMedicalRecords.API.Applications.Commands.Document
         [DataMember] public string Name { get; set; }
         [DataMember] public string DepartmentName { get; set; }
         [DataMember] public string Description { get; set; }
-        [DataMember] public string PatientId { get; set; }
+        [DataMember] public string PatientNo { get; set; }
     }
     
 }

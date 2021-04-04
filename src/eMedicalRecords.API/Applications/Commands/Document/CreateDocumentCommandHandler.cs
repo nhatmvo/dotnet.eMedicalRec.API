@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using eMedicalRecords.Domain.AggregatesModel.PatientAggregate;
+using eMedicalRecords.Infrastructure.Idempotency;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -11,22 +13,43 @@ namespace eMedicalRecords.API.Applications.Commands.Document
     public class CreateDocumentCommandHandler : IRequestHandler<CreateDocumentCommand, bool>
     {
         private readonly IDocumentRepository _documentRepository;
+        private readonly IPatientRepository _patientRepository;
         private readonly ILogger<CreateDocumentCommandHandler> _logger;
 
         public CreateDocumentCommandHandler(IDocumentRepository documentRepository,
+            IPatientRepository patientRepository,
             ILogger<CreateDocumentCommandHandler> logger)
         {
             _documentRepository = documentRepository;
+            _patientRepository = patientRepository;
             _logger = logger;
         }
         
         public async Task<bool> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
         {
-            var documentToCreate = new Document(request.Name, request.DepartmentName);
-            documentToCreate.PatientId = Guid.Parse(request.PatientId);
-            
+            var patient = await _patientRepository.FindPatientByPatientNo(request.PatientNo);
+            if (patient == null)
+                throw new Exception();
+
+            var documentToCreate = new Document(request.Name, request.DepartmentName, patient.Id);
+            _logger.LogInformation("----- Creating document for patient {PatientNo}", patient.PatientNo);
             await _documentRepository.Add(documentToCreate);
-            await _documentRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+            
+            return await _documentRepository.UnitOfWork
+                .SaveEntitiesAsync(cancellationToken);
+        }
+    }
+    
+    public class CreateDocumentIdentifiedCommandHandler : IdentifiedCommandHandler<CreateDocumentCommand, bool>
+    {
+        public CreateDocumentIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
+            ILogger<CreateDocumentIdentifiedCommandHandler> logger) : base(mediator, requestManager,
+            logger)
+        {
+        }
+
+        protected override bool CreateResultForDuplicateRequest()
+        {
             return true;
         }
     }

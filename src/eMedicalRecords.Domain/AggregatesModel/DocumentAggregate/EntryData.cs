@@ -1,4 +1,5 @@
 using System;
+using eMedicalRecords.Domain.Events;
 using eMedicalRecords.Domain.SeedWorks;
 
 namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
@@ -9,7 +10,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
 
         private Guid _entryId;
         public Entry Entry { get; private set; }
-        
+
         private string _value;
         
         protected EntryData() { }
@@ -19,11 +20,15 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
             _entryId = entryId;
             _sectionId = sectionId;
             _value = value;
+            AddEntrySubmittedDomainEvent();
         }
 
-        public void Validation()
+        public void AddEntrySubmittedDomainEvent()
         {
-            
+            AddDomainEvent(new EntryDataSubmittedDomainEvent(this, _sectionId, _value));
         }
+        
+        
+        
     }
 }

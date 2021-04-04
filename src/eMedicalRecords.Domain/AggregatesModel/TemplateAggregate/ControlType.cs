@@ -9,6 +9,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
         public static ControlType Label = new ControlType(3, nameof(Label));
         public static ControlType Image = new ControlType(4, nameof(Image));
         public static ControlType Video = new ControlType(5, nameof(Video));
+        public static ControlType Text = new ControlType(6, nameof(Text));
         
         public ControlType(int id, string name) : base(id, name)
         {

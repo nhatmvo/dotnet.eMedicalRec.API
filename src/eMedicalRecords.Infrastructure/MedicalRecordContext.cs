@@ -22,7 +22,7 @@ namespace eMedicalRecords.Infrastructure
         private IDbContextTransaction _currentTransaction;
         private readonly IMediator _mediator;
         
-        public DbSet<Control> Controls { get; set; }
+        public DbSet<ControlBase> Controls { get; set; }
         public DbSet<ControlType> ControlTypes { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Entry> Entries { get; set; }
@@ -43,7 +43,11 @@ namespace eMedicalRecords.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfiguration(new ClientRequestEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ControlEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ControlTextEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ControlTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new DocumentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new EntryEntityTypeConfiguration());
@@ -112,19 +116,18 @@ namespace eMedicalRecords.Infrastructure
     {
         public MedicalRecordContext CreateDbContext(string[] args)
         {
-            IConfiguration config = new ConfigurationBuilder()
+            var config = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../eMedicalRecords.API"))
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            var dbConfiguration = config.Get<DbConfiguration>();
+                .AddJsonFile("appsettings.json").Build();
+            
+            
             var builder = new NpgsqlConnectionStringBuilder()
             {
-                Host = dbConfiguration.Hostname,
-                Database = dbConfiguration.Database,
-                Username = dbConfiguration.Username,
-                Password = dbConfiguration.Password,
-                Port = int.Parse(dbConfiguration.Port)
+                Host = "localhost",
+                Database = "emr",
+                Username = "pgdev",
+                Password = "default",
+                Port = 54321
             };
                 
             var optionsBuilder = new DbContextOptionsBuilder<MedicalRecordContext>()
