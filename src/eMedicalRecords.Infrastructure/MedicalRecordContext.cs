@@ -106,7 +106,7 @@ namespace eMedicalRecords.Infrastructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken)
         {
-            // await _mediator.DispatchDomainEventsAsync(this);
+            await _mediator.DispatchDomainEventsAsync(this);
             await base.SaveChangesAsync(cancellationToken);
             return true;
         }

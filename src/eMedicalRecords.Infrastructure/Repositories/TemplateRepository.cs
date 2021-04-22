@@ -11,7 +11,6 @@ namespace eMedicalRecords.Infrastructure.Repositories
     public class TemplateRepository : ITemplateRepository
     {
         private readonly MedicalRecordContext _context;
-
         public TemplateRepository(MedicalRecordContext context)
         {
             _context = context;

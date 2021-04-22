@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using StackExchange.Redis;
 
 namespace eMedicalRecords.API
 {
@@ -51,6 +52,23 @@ namespace eMedicalRecords.API
         {
             services.AddOptions();
             services.Configure<DbConfiguration>(configuration);
+            services.Configure<RedisConfiguration>(configuration);
+            return services;
+        }
+
+        public static IServiceCollection AddCustomMultiplexer(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddSingleton<ConnectionMultiplexer>(sp =>
+            {
+                var settings = configuration.Get<RedisConfiguration>();
+                var confOptions = ConfigurationOptions.Parse(settings.RedisConnectionString, true);
+
+                confOptions.ResolveDns = true;
+
+                return ConnectionMultiplexer.Connect(confOptions);
+            });
+
             return services;
         }
     }

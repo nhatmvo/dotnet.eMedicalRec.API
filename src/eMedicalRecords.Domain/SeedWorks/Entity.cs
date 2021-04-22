@@ -17,7 +17,7 @@ namespace eMedicalRecords.Domain.SeedWorks
 
         private List<INotification> _domainEvents;
 
-        public ReadOnlyCollection<INotification> DomainEvents => _domainEvents.AsReadOnly();
+        public ReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
 
         public void AddDomainEvent(INotification domainEvent)
         {

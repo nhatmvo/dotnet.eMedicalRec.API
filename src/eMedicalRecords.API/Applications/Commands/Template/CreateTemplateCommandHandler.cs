@@ -22,8 +22,8 @@ namespace eMedicalRecords.API.Applications.Commands.Template
         
         public async Task<bool> Handle(CreateTemplateCommand request, CancellationToken cancellationToken)
         {
-            var headingSet = new Template(request.Name, request.Description);
-            headingSet.AddSections(AddSectionsAndItsChildFromRequest(request.SectionRequests));
+            var sectionsBeAdded = AddSectionsAndItsChildFromRequest(request.SectionRequests);
+            var headingSet = new Template(request.Name, request.Description, sectionsBeAdded);
             
             await _templateRepository.AddTemplate(headingSet);
             return await _templateRepository.UnitOfWork

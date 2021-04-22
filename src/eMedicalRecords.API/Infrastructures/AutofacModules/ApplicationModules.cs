@@ -19,6 +19,10 @@ namespace eMedicalRecords.API.Infrastructures.AutofacModules
             builder.RegisterType<TemplateRepository>()
                 .As<ITemplateRepository>()
                 .InstancePerDependency();
+
+            builder.RegisterType<TemplateRedisRepository>()
+                .As<ITemplateRedisRepository>()
+                .InstancePerDependency();
         }
     }
 }

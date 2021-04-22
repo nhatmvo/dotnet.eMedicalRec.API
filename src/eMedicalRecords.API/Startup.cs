@@ -25,6 +25,7 @@ namespace eMedicalRecords.API
                 .AddCustomConfiguration(Configuration)
                 .AddMediatR(Assembly.GetExecutingAssembly())
                 .AddCustomDbContext(Configuration)
+                .AddCustomMultiplexer(Configuration)
                 .AddCustomHealthCheck(Configuration);
 
         }

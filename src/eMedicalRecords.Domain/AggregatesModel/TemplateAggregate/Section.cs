@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using eMedicalRecords.Domain.Exceptions;
 using eMedicalRecords.Domain.SeedWorks;
 
 namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
@@ -40,15 +41,13 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
 
         private ControlBase InstantiateControlById(int controlTypeId)
         {
-            throw new NotImplementedException();
-            // switch (controlTypeId) 
-            // {
-            //     case ControlText:
-            //         return new ControlText(-1, -1, -1, string.Empty);
-            //     default:
-            //         //TODO: Add Proper Domain Exception;
-            //         throw new Exception();
-            // }
+            switch (controlTypeId) 
+            {
+                case ControlText:
+                    return new ControlText(-1, -1, -1, string.Empty);
+                default:
+                    throw new DomainException($"Control Type Id: {controlTypeId} unknown");
+            }
         }
     }
 }
