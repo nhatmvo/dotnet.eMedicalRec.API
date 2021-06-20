@@ -10,7 +10,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<EntryData> builder)
         {
-            builder.ToTable("mre_entry_data");
+            builder.ToTable("document_entry_data");
 
             builder.HasKey(b => b.Id);
             builder.Property(b => b.Id).HasColumnName("id");
@@ -30,7 +30,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("value")
                 .IsRequired();
 
-            builder.HasOne<Section>()
+            builder.HasOne<ElementBase>()
                 .WithMany()
                 .HasForeignKey("_sectionId")
                 .IsRequired();

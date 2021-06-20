@@ -5,13 +5,19 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
 {
     using Domain.AggregatesModel.TemplateAggregate;
 
-    public class ControlTypeEntityTypeConfiguration : IEntityTypeConfiguration<ControlType>
+    public class ElementTypeEntityTypeConfiguration : IEntityTypeConfiguration<ElementType>
     {
-        public void Configure(EntityTypeBuilder<ControlType> builder)
+        public void Configure(EntityTypeBuilder<ElementType> builder)
         {
-            builder.ToTable("control_types");
+            builder.ToTable("template_element_type");
 
             builder.HasKey(b => b.Id);
+
+            builder.Property(b => b.Id)
+                .HasColumnName("id");
+
+            builder.Property(b => b.Name)
+                .HasColumnName("name");
 
             builder.Property(b => b.Id)
                 .HasDefaultValue(1)

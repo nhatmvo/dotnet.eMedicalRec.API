@@ -6,27 +6,24 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eMedicalRecords.Infrastructure.EntityConfigurations
 {
-    public class SectionEntityTypeConfiguration : IEntityTypeConfiguration<Section>
+    public class ElementBaseEntityTypeConfiguration : IEntityTypeConfiguration<ElementBase>
     {
-        public void Configure(EntityTypeBuilder<Section> builder)
+        public void Configure(EntityTypeBuilder<ElementBase> builder)
         {
-            builder.ToTable("mre_sections");
+            builder.ToTable("template_element_base");
 
             builder.HasKey(b => b.Id);
 
             builder.Ignore(b => b.DomainEvents);
-
-            builder.Property(b => b.Id)
-                .HasColumnName("id");
-
-            builder.Property<Guid?>("_parentSectionId")
+            
+            builder.Property<Guid?>("_parentElementId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("parent_section_id")
+                .HasColumnName("parent_element_id")
                 .IsRequired(false);
 
-            builder.Property<int>("_controlTypeId")
+            builder.Property<int>("_elementTypeId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("control_type_id")
+                .HasColumnName("element_type_id")
                 .IsRequired();
             
             builder.Property<string>("_name")
@@ -44,18 +41,19 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("description")
                 .IsRequired(false);
 
-            builder.Property<List<string>>("_options")
+            builder.Property<Guid>("_templateId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("options")
-                .IsRequired(false);
+                .HasColumnName("template_id")
+                .IsRequired();
 
-            builder.HasMany(b => b.ChildSections)
-                .WithOne()
-                .HasForeignKey("_parentSectionId");
-
-            builder.HasOne(b => b.ControlType)
+            builder.HasOne(b => b.ElementType)
                 .WithMany()
-                .HasForeignKey("_controlTypeId");
+                .HasForeignKey("_elementTypeId");
+            
+            builder.HasMany(b => b.ChildElements)
+                .WithOne()
+                .HasForeignKey("_parentElementId");
+
         }
     }
 }

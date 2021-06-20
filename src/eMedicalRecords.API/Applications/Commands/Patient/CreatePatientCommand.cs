@@ -4,7 +4,7 @@ using MediatR;
 
 namespace eMedicalRecords.API.Applications.Commands.Patient
 {
-    public class CreatePatientCommand : IRequest<bool>
+    public class CreatePatientCommand : IRequest<PatientDTO>
     {
         [DataMember] public string IdentityNo { get; set; }
         [DataMember] public int IdentityTypeId { get; set; }

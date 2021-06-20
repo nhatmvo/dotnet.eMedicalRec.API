@@ -5,15 +5,16 @@ using MediatR;
 
 namespace eMedicalRecords.API.Applications.Commands.Document
 {
-    public class SubmitDataCommand : IRequest<bool>
+    public class PopulateDataCommand : IRequest<bool>
     {
+        [DataMember] public Guid EntryId { get; set; }
+
         [DataMember] public List<EntryDataRequest> EntryDataRequests { get; set; }
     }
 
     public class EntryDataRequest
     {
-        [DataMember] public Guid EntryId { get; set; }
-        [DataMember] public Guid SectionId { get; set; }
+        [DataMember] public Guid ElementId { get; set; }
         [DataMember] public string Value { get; set; }
     }
 }

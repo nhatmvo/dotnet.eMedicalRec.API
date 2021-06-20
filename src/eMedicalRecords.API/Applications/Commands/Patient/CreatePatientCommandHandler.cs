@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace eMedicalRecords.API.Applications.Commands.Patient
 {
     using Domain.AggregatesModel.PatientAggregate;
-    public class CreatePatientCommandHandler : IRequestHandler<CreatePatientCommand, bool>
+    public class CreatePatientCommandHandler : IRequestHandler<CreatePatientCommand, PatientDTO>
     {
         private readonly IPatientRepository _patientRepository;
         private readonly ILogger<CreatePatientCommandHandler> _logger;
@@ -20,7 +20,7 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
             _logger = logger;
         }
         
-        public async Task<bool> Handle(CreatePatientCommand request, CancellationToken cancellationToken)
+        public async Task<PatientDTO> Handle(CreatePatientCommand request, CancellationToken cancellationToken)
         {
             var patientIdentifier = await GetPatientIdentifierNumber();
             var patientToAdd = await _patientRepository.FindPatientByIdentityNo(request.IdentityNo, request.IdentityTypeId);
@@ -29,7 +29,7 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
                 _logger.LogError(
                     "This patient with identity: {IdentityNo} of type {IdentityType} already been registered with the system",
                     request.IdentityNo, request.IdentityTypeId);
-                return false;
+                return null;
             }
             
             var address = new PatientAddress(request.Country, request.City, request.District, request.AddressLine);
@@ -40,7 +40,8 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
             await _patientRepository.AddAsync(patient);
             await _patientRepository.UnitOfWork
                 .SaveEntitiesAsync(cancellationToken);
-            return true;
+            
+            return PatientDTO.FromPatient(patient);
         }
 
         private async Task<string> GetPatientIdentifierNumber()
@@ -54,18 +55,29 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
             }
         }
     }
-    
-    public class CreatePatientIdentifiedCommandHandler : IdentifiedCommandHandler<CreatePatientCommand, bool>
-    {
-        public CreatePatientIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
-            ILogger<CreatePatientIdentifiedCommandHandler> logger) : base(mediator, requestManager,
-            logger)
-        {
-        }
 
-        protected override bool CreateResultForDuplicateRequest()
+    public record PatientDTO
+    {
+        public string IdentityNo { get; init; }
+        public int IdentityTypeId { get; init; }
+        public string FirstName { get; init; }
+        public string MiddleName { get; init; }
+        public string LastName { get; init; }
+        public string Country { get; init; }
+        public string City { get; init; }
+        public string District { get; init; }
+        public string AddressLine { get; init; }
+        public string PhoneNumber { get; init; }
+        public string Email { get; init; }
+        public DateTime DateOfBirth { get; init; }
+        public bool HasInsurance { get; init; }
+        public string Description { get; init; }
+
+        public static PatientDTO FromPatient(Patient patient)
         {
-            return true;
-        }
+            return new PatientDTO();
+
+        } 
     }
+    
 }

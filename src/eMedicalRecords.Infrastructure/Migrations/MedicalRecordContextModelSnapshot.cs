@@ -27,9 +27,6 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("_createdDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_date");
@@ -40,7 +37,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("mr_documents");
+                    b.ToTable("document");
                 });
 
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Entry", b =>
@@ -74,7 +71,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
                     b.HasIndex("_templateId");
 
-                    b.ToTable("mr_entries");
+                    b.ToTable("document_entry");
                 });
 
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.EntryData", b =>
@@ -108,7 +105,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
                     b.HasIndex("_sectionId");
 
-                    b.ToTable("mre_entry_data");
+                    b.ToTable("document_entry_data");
                 });
 
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.PatientAggregate.IdentityType", b =>
@@ -192,81 +189,36 @@ namespace eMedicalRecords.Infrastructure.Migrations
                     b.HasIndex("_identityNo")
                         .IsUnique();
 
-                    b.ToTable("patients");
+                    b.ToTable("patient");
                 });
 
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlBase", b =>
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("control_base_id");
-
-                    b.Property<string>("_name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<Guid>("_sectionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("section_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("_sectionId");
-
-                    b.ToTable("mre_control_base");
-                });
-
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlType", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("control_types");
-                });
-
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Section", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid?>("AdditionalControlInformationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("TemplateId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("_controlTypeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("control_type_id");
+                        .HasColumnName("element_base_id");
 
                     b.Property<string>("_description")
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<int>("_elementTypeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("element_type_id");
+
                     b.Property<string>("_name")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<List<string>>("_options")
-                        .HasColumnType("text[]")
-                        .HasColumnName("options");
-
-                    b.Property<Guid?>("_parentSectionId")
+                    b.Property<Guid?>("_parentElementId")
                         .HasColumnType("uuid")
-                        .HasColumnName("parent_section_id");
+                        .HasColumnName("parent_element_id");
+
+                    b.Property<Guid>("_templateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("template_id");
 
                     b.Property<string>("_tooltip")
                         .HasColumnType("text")
@@ -274,15 +226,31 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdditionalControlInformationId");
+                    b.HasIndex("_elementTypeId");
 
-                    b.HasIndex("TemplateId");
+                    b.HasIndex("_parentElementId");
 
-                    b.HasIndex("_controlTypeId");
+                    b.HasIndex("_templateId");
 
-                    b.HasIndex("_parentSectionId");
+                    b.ToTable("template_element_base");
+                });
 
-                    b.ToTable("mre_sections");
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("template_element_type");
                 });
 
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Template", b =>
@@ -303,12 +271,54 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("mre_template");
+                    b.ToTable("template");
                 });
 
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlText", b =>
+            modelBuilder.Entity("eMedicalRecords.Infrastructure.Idempotency.ClientRequest", b =>
                 {
-                    b.HasBaseType("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlBase");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("time");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("request");
+                });
+
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementCheckbox", b =>
+                {
+                    b.HasBaseType("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase");
+
+                    b.Property<List<string>>("_options")
+                        .HasColumnType("text[]")
+                        .HasColumnName("options");
+
+                    b.ToTable("template_element_checkbox");
+                });
+
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementRadioButton", b =>
+                {
+                    b.HasBaseType("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase");
+
+                    b.Property<List<string>>("_options")
+                        .HasColumnType("text[]")
+                        .HasColumnName("options");
+
+                    b.ToTable("template_element_radiobutton");
+                });
+
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementText", b =>
+                {
+                    b.HasBaseType("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase");
 
                     b.Property<string>("_customExpression")
                         .IsRequired()
@@ -335,7 +345,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .HasDefaultValue(-1)
                         .HasColumnName("text_restriction_level");
 
-                    b.ToTable("mre_control_text");
+                    b.ToTable("template_element_text");
                 });
 
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Entry", b =>
@@ -363,7 +373,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Section", null)
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", null)
                         .WithMany()
                         .HasForeignKey("_sectionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -397,7 +407,7 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
                             b1.HasKey("PatientId");
 
-                            b1.ToTable("patients");
+                            b1.ToTable("patient");
 
                             b1.WithOwner()
                                 .HasForeignKey("PatientId");
@@ -408,47 +418,50 @@ namespace eMedicalRecords.Infrastructure.Migrations
                     b.Navigation("PatientAddress");
                 });
 
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlBase", b =>
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", b =>
                 {
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Section", "Section")
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementType", "ElementType")
                         .WithMany()
-                        .HasForeignKey("_sectionId")
+                        .HasForeignKey("_elementTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Section");
-                });
-
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Section", b =>
-                {
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlBase", "AdditionalControlInformation")
-                        .WithMany()
-                        .HasForeignKey("AdditionalControlInformationId");
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", null)
+                        .WithMany("ChildElements")
+                        .HasForeignKey("_parentElementId");
 
                     b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Template", null)
-                        .WithMany("Sections")
-                        .HasForeignKey("TemplateId");
-
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlType", "ControlType")
-                        .WithMany()
-                        .HasForeignKey("_controlTypeId")
+                        .WithMany("Elements")
+                        .HasForeignKey("_templateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Section", null)
-                        .WithMany("ChildSections")
-                        .HasForeignKey("_parentSectionId");
-
-                    b.Navigation("AdditionalControlInformation");
-
-                    b.Navigation("ControlType");
+                    b.Navigation("ElementType");
                 });
 
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlText", b =>
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementCheckbox", b =>
                 {
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlBase", null)
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", null)
                         .WithOne()
-                        .HasForeignKey("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ControlText", "Id")
+                        .HasForeignKey("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementCheckbox", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementRadioButton", b =>
+                {
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", null)
+                        .WithOne()
+                        .HasForeignKey("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementRadioButton", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementText", b =>
+                {
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", null)
+                        .WithOne()
+                        .HasForeignKey("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementText", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -463,14 +476,14 @@ namespace eMedicalRecords.Infrastructure.Migrations
                     b.Navigation("RecordValues");
                 });
 
-            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Section", b =>
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", b =>
                 {
-                    b.Navigation("ChildSections");
+                    b.Navigation("ChildElements");
                 });
 
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Template", b =>
                 {
-                    b.Navigation("Sections");
+                    b.Navigation("Elements");
                 });
 #pragma warning restore 612, 618
         }

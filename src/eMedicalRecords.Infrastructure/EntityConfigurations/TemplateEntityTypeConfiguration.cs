@@ -1,4 +1,5 @@
 
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +11,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Template> builder)
         {
-            builder.ToTable("mre_template");
+            builder.ToTable("template");
             builder.HasKey(b => b.Id);
 
             builder.Ignore(b => b.DomainEvents);
@@ -28,8 +29,12 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("name")
                 .IsRequired();
 
-            var navigation = builder.Metadata.FindNavigation(nameof(Template.Sections));
+            var navigation = builder.Metadata.FindNavigation(nameof(Template.Elements));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            builder.HasMany(b => b.Elements)
+                .WithOne()
+                .HasForeignKey("_templateId");
         }
     }
 }

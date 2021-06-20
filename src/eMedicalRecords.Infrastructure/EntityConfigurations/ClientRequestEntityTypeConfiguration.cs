@@ -8,7 +8,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ClientRequest> builder)
         {
-            builder.ToTable("requests").HasKey(c => c.Id);
+            builder.ToTable("request").HasKey(c => c.Id);
             builder.Property(b => b.Id)
                 .HasColumnName("id");
             builder.Property(b => b.Name)

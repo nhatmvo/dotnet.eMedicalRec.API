@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using eMedicalRecords.Infrastructure.Idempotency;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -11,53 +10,84 @@ namespace eMedicalRecords.API.Applications.Commands.Template
 {
     using Domain.AggregatesModel.TemplateAggregate;
     
-    public class CreateTemplateCommandHandler : IRequestHandler<CreateTemplateCommand, bool>
+    public class CreateTemplateCommandHandler : IRequestHandler<CreateTemplateCommand, string>
     {
         private readonly ITemplateRepository _templateRepository;
+        private readonly ILogger<CreateTemplateCommandHandler> _logger;
 
-        public CreateTemplateCommandHandler(ITemplateRepository templateRepository)
+        public CreateTemplateCommandHandler(ITemplateRepository templateRepository,
+            ILogger<CreateTemplateCommandHandler> logger)
         {
             _templateRepository = templateRepository;
+            _logger = logger;
         }
         
-        public async Task<bool> Handle(CreateTemplateCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateTemplateCommand request, CancellationToken cancellationToken)
         {
-            var sectionsBeAdded = AddSectionsAndItsChildFromRequest(request.SectionRequests);
-            var headingSet = new Template(request.Name, request.Description, sectionsBeAdded);
+            var sectionsBeAdded = FlattenNestedElement(request.Elements);
+            var template = new Template(request.Name, request.Description, sectionsBeAdded);
             
-            await _templateRepository.AddTemplate(headingSet);
-            return await _templateRepository.UnitOfWork
+            await _templateRepository.AddTemplate(template);
+            template.WrapUp();
+
+            await _templateRepository
+                .UnitOfWork
                 .SaveEntitiesAsync(cancellationToken);
+
+            return template.Id.ToString();
+
         }
 
-        private List<Section> AddSectionsAndItsChildFromRequest(List<SectionRequest> sections, Guid? parentSectionId = null)
+        private List<ElementBase> FlattenNestedElement(List<ElementProperty> elements, Guid? parentSectionId = null)
         {
-            var result = new List<Section>();
-            foreach (var section in sections)
+            var result = new List<ElementBase>();
+            foreach (var element in elements)
             {
-                var sectionToAdd = new Section(section.Name, section.Tooltip, section.KindId, section.KindValues,
-                    parentSectionId);
-                result.Add(sectionToAdd);
-                if (section.ChildSections != null && section.ChildSections.Any())
+                ElementBase elementToAdd = null;
+                switch (element.ElementTypeId)
                 {
-                    result.AddRange(AddSectionsAndItsChildFromRequest(section.ChildSections, sectionToAdd.Id));
+                    case (int) ElementTypeEnum.Checkbox:
+                        elementToAdd = InitCheckbox(element, parentSectionId);
+                        break;
+                    case (int) ElementTypeEnum.RadioButton:
+                        elementToAdd = InitRadioButton(element, parentSectionId);
+                        break;
+                    case (int) ElementTypeEnum.Text:
+                        elementToAdd = InitText(element, parentSectionId);
+                        break;
                 }
+                result.Add(elementToAdd);
+                
+                if (element.ChildElements != null && element.ChildElements.Any())
+                    result.AddRange(FlattenNestedElement(element.ChildElements, elementToAdd?.Id));
             }
             return result;
         }
-    }
-    
-    public class CreateTemplateIdentifiedCommandHandler : IdentifiedCommandHandler<CreateTemplateCommand, bool>
-    {
-        public CreateTemplateIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
-            ILogger<CreateTemplateIdentifiedCommandHandler> logger) : base(mediator, requestManager,
-            logger)
+
+        private ElementBase InitCheckbox(ElementProperty elementRequest, Guid? parentElementId)
         {
+            if (!(elementRequest is CheckboxProperty checkboxProperty))
+                throw new ArgumentNullException("");
+            return new ElementCheckbox(elementRequest.Name, elementRequest.ElementTypeId, elementRequest.Tooltip,
+                elementRequest.Description, parentElementId, checkboxProperty.Values);
         }
 
-        protected override bool CreateResultForDuplicateRequest()
+        private ElementBase InitRadioButton(ElementProperty elementRequest, Guid? parentElementId)
         {
-            return true;
+            if (!(elementRequest is RadiobuttonProperty radioButtonProperty))
+                throw new ArgumentNullException("");
+            return new ElementRadioButton(elementRequest.Name, elementRequest.ElementTypeId, elementRequest.Tooltip,
+                elementRequest.Description, parentElementId, radioButtonProperty.Values);   
+        }
+
+        private ElementBase InitText(ElementProperty elementRequest, Guid? parentElementId)
+        {
+            if (!(elementRequest is TextProperty textProperty))
+                throw new ArgumentNullException("");
+            var elementText = new ElementText(elementRequest.Name, elementRequest.ElementTypeId, elementRequest.Tooltip,
+                elementRequest.Description, parentElementId);
+            elementText.SetValidationProperties(textProperty.MinimumLength, textProperty.MaximumLength, textProperty.TextRestrictionLevel, textProperty.CustomExpression);
+            return elementText;
         }
     }
 }

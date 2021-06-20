@@ -2,10 +2,10 @@ namespace eMedicalRecords.Infrastructure.Configurations
 {
     public class DbConfiguration
     {
-        public string Hostname { get; set; }
-        public string Port { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Database { get; set; }
+        public string PostgresHostname { get; set; }
+        public string PostgresPort { get; set; }
+        public string PostgresUsername { get; set; }
+        public string PostgresPassword { get; set; }
+        public string PostgresDatabase { get; set; }
     }
 }

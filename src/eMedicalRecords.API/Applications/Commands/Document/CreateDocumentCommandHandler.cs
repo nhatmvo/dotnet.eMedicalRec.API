@@ -39,18 +39,4 @@ namespace eMedicalRecords.API.Applications.Commands.Document
                 .SaveEntitiesAsync(cancellationToken);
         }
     }
-    
-    public class CreateDocumentIdentifiedCommandHandler : IdentifiedCommandHandler<CreateDocumentCommand, bool>
-    {
-        public CreateDocumentIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
-            ILogger<CreateDocumentIdentifiedCommandHandler> logger) : base(mediator, requestManager,
-            logger)
-        {
-        }
-
-        protected override bool CreateResultForDuplicateRequest()
-        {
-            return true;
-        }
-    }
 }

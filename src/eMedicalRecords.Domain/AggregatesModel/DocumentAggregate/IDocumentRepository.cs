@@ -12,8 +12,5 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         Task<List<Document>> FindDocumentsByPatientId(Guid patientId);
         Task SubmitEntryData(IEnumerable<EntryData> data);
         Document Update(Document document);
-        
-
-
     }
 }

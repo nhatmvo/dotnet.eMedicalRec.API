@@ -10,26 +10,27 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
         private bool _isDefault;
         private string _name;
         private string _description;
+        private bool _isDirty;
 
-        private readonly List<Section> _sections;
-        public IReadOnlyCollection<Section> Sections => _sections.AsReadOnly();
+        private readonly List<ElementBase> _elements;
+        public IReadOnlyCollection<ElementBase> Elements => _elements.AsReadOnly();
         public sealed override Guid Id { get; protected set; } = Guid.NewGuid();
 
         protected Template()
         { }
 
-        public Template(string name, string description, List<Section> sections)
+        public Template(string name, string description, List<ElementBase> elements)
         {
             _name = name;
+            _isDirty = true;
             _description = description;
-            _sections = new List<Section>();
-            _sections.AddRange(sections);
-            AddDomainEvent(new TemplateAddedDomainEvent(this, Id.ToString()));
+            _elements ??= new List<ElementBase>();
+            _elements.AddRange(elements);
         }
 
-        public void AddSections(List<Section> section)
+        public void WrapUp()
         {
-            _sections.AddRange(section);
+            AddDomainEvent(new TemplateAddedDomainEvent(this, Id.ToString()));
         }
     }
 }

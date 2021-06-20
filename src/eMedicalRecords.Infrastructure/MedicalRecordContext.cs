@@ -22,13 +22,12 @@ namespace eMedicalRecords.Infrastructure
         private IDbContextTransaction _currentTransaction;
         private readonly IMediator _mediator;
         
-        public DbSet<ControlBase> Controls { get; set; }
-        public DbSet<ControlType> ControlTypes { get; set; }
+        public DbSet<ElementBase> ElementBases { get; set; }
+        public DbSet<ElementType> ElementTypes { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<Entry> Entries { get; set; }
         public DbSet<EntryData> EntryData { get; set; }
         public DbSet<Template> Templates { get; set; }
-        public DbSet<Section> Sections { get; set; }
         public DbSet<EntryData> SectionData { get; set; }
         public DbSet<IdentityType> IdentityTypes { get; set; }
         public DbSet<Patient> Patients { get; set; }
@@ -46,13 +45,14 @@ namespace eMedicalRecords.Infrastructure
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new ClientRequestEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new ControlEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new ControlTextEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new ControlTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ElementBaseEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ElementTextEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ElementTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ElementCheckboxEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ElementRadioButtonEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new DocumentEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new EntryEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new TemplateEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new SectionEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new EntryDataEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new IdentityTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
@@ -127,7 +127,7 @@ namespace eMedicalRecords.Infrastructure
                 Database = "emr",
                 Username = "pgdev",
                 Password = "default",
-                Port = 54321
+                Port = 5432
             };
                 
             var optionsBuilder = new DbContextOptionsBuilder<MedicalRecordContext>()

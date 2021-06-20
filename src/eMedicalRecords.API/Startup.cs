@@ -25,7 +25,7 @@ namespace eMedicalRecords.API
                 .AddCustomConfiguration(Configuration)
                 .AddMediatR(Assembly.GetExecutingAssembly())
                 .AddCustomDbContext(Configuration)
-                .AddCustomMultiplexer(Configuration)
+                .AddCustomHostedService()
                 .AddCustomHealthCheck(Configuration);
 
         }
@@ -42,7 +42,7 @@ namespace eMedicalRecords.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

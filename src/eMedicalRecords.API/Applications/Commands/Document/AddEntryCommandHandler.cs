@@ -30,16 +30,5 @@ namespace eMedicalRecords.API.Applications.Commands.Document
         }
     }
     
-    public class AddEntryIdentifiedCommandHandler : IdentifiedCommandHandler<AddEntryCommand, bool>
-    {
-        public AddEntryIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
-            ILogger<AddEntryIdentifiedCommandHandler> logger) : base(mediator, requestManager, logger)
-        {
-        }
 
-        protected override bool CreateResultForDuplicateRequest()
-        {
-            return true;
-        }
-    }
 }

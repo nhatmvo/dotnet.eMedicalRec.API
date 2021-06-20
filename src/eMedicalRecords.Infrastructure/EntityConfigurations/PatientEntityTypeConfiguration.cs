@@ -9,7 +9,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Patient> builder)
         {
-            builder.ToTable("patients");
+            builder.ToTable("patient");
 
             builder.Ignore(b => b.DomainEvents);
 

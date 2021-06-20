@@ -32,18 +32,4 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
             
         }
     }
-    
-    public class UpdatePatientIdentifiedCommandHandler : IdentifiedCommandHandler<UpdatePatientCommand, bool>
-    {
-        public UpdatePatientIdentifiedCommandHandler(IMediator mediator, IRequestManager requestManager,
-            ILogger<UpdatePatientIdentifiedCommandHandler> logger) : base(mediator, requestManager,
-            logger)
-        {
-        }
-
-        protected override bool CreateResultForDuplicateRequest()
-        {
-            return true;
-        }
-    }
 }

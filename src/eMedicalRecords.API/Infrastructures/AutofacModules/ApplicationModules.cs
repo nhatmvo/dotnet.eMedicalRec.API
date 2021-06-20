@@ -1,14 +1,15 @@
-using System.Transactions;
 using Autofac;
-using eMedicalRecords.API.Applications.Behaviors;
-using eMedicalRecords.Domain.AggregatesModel.DocumentAggregate;
-using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
-using eMedicalRecords.Infrastructure.Repositories;
-using MediatR;
+using eMedicalRecords.API.Projections;
+using eMedicalRecords.Infrastructure.Services;
 
 namespace eMedicalRecords.API.Infrastructures.AutofacModules
 {
-    public class ApplicationModules : Autofac.Module
+    using Applications.Queries.TemplateQueries;
+    using Domain.AggregatesModel.DocumentAggregate;
+    using Domain.AggregatesModel.TemplateAggregate;
+    using Infrastructure.Repositories;
+    
+    public class ApplicationModules : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
@@ -20,9 +21,17 @@ namespace eMedicalRecords.API.Infrastructures.AutofacModules
                 .As<ITemplateRepository>()
                 .InstancePerDependency();
 
-            builder.RegisterType<TemplateRedisRepository>()
-                .As<ITemplateRedisRepository>()
+            builder.RegisterType<TemplateQueries>()
+                .As<ITemplateQueries>()
                 .InstancePerDependency();
+
+            builder.RegisterType<TemplateService>()
+                .As<ITemplateService>()
+                .SingleInstance();
+
+            builder.RegisterType<MongoDbProjection>()
+                .As<IStateProjection>()
+                .SingleInstance();
         }
     }
 }

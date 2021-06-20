@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eMedicalRecords.Infrastructure.EntityConfigurations
 {
-    public class ControlTextEntityTypeConfiguration : IEntityTypeConfiguration<ControlText>
+    public class ElementTextEntityTypeConfiguration : IEntityTypeConfiguration<ElementText>
     {
-        public void Configure(EntityTypeBuilder<ControlText> builder)
+        public void Configure(EntityTypeBuilder<ElementText> builder)
         {
-            builder.ToTable("mre_control_text");
+            builder.ToTable("template_element_text");
 
             builder.Property(b => b.Id)
                 .ValueGeneratedOnAdd()
-                .HasColumnName("control_base_id");
+                .HasColumnName("element_base_id");
             
             builder.Property<int?>("_maximumLength")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -18,22 +19,6 @@ namespace eMedicalRecords.API.Controllers
         {
             _mediator = mediator;
         }
-
-        [HttpPost]
-        [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateTemplateForDocument([FromBody] CreateTemplateCommand templateCommand,
-            [FromHeader(Name = "X-Request-Id")] string requestId)
-        {
-            var commandResult = false;
-            if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
-            {
-                commandResult = await _mediator.Send(templateCommand);
-            }
-
-            if (!commandResult)
-                return BadRequest();
-            return Ok();
-        }
+        
     }
 }

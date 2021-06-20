@@ -10,7 +10,7 @@ namespace eMedicalRecords.API.Infrastructures.AutofacModules
         {
             builder.RegisterGeneric(typeof(TransactionPipelineBehavior<,>))
                 .As(typeof(IPipelineBehavior<,>));
-
+            
             builder.RegisterGeneric(typeof(ValidationPipelineBehavior<,>))
                 .As(typeof(IPipelineBehavior<,>));
 

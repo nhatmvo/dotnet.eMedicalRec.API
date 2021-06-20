@@ -1,12 +1,13 @@
 using System;
 using System.Reflection;
+using eMedicalRecords.API.Projections;
 using eMedicalRecords.Infrastructure;
 using eMedicalRecords.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Npgsql;
-using StackExchange.Redis;
 
 namespace eMedicalRecords.API
 {
@@ -17,12 +18,13 @@ namespace eMedicalRecords.API
             var dbConfiguration = configuration.Get<DbConfiguration>();
             var builder = new NpgsqlConnectionStringBuilder()
             {
-                Host = dbConfiguration.Hostname,
-                Database = dbConfiguration.Database,
-                Username = dbConfiguration.Username,
-                Password = dbConfiguration.Password,
-                Port = int.Parse(dbConfiguration.Port)
+                Host = dbConfiguration.PostgresHostname,
+                Database = dbConfiguration.PostgresDatabase,
+                Username = dbConfiguration.PostgresUsername,
+                Password = dbConfiguration.PostgresPassword,
+                Port = int.Parse(dbConfiguration.PostgresPort)
             };
+            
             services.AddDbContext<MedicalRecordContext>(options =>
             {
                 options.UseNpgsql(builder.ConnectionString, sqlOptions =>
@@ -32,13 +34,14 @@ namespace eMedicalRecords.API
                         errorCodesToAdd: null!);
                 });
             });
-            
+
             return services;
         }
 
         public static IServiceCollection AddCustomMvc(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
             return services;
         } 
 
@@ -47,28 +50,22 @@ namespace eMedicalRecords.API
         {
             return services;
         }
+
+        public static IServiceCollection AddCustomHostedService(this IServiceCollection services)
+        {
+            services.AddHostedService<ProjectionStartupService>();
+            return services;
+        }
         
         public static IServiceCollection AddCustomConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions();
             services.Configure<DbConfiguration>(configuration);
-            services.Configure<RedisConfiguration>(configuration);
-            return services;
-        }
-
-        public static IServiceCollection AddCustomMultiplexer(this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            services.AddSingleton<ConnectionMultiplexer>(sp =>
-            {
-                var settings = configuration.Get<RedisConfiguration>();
-                var confOptions = ConfigurationOptions.Parse(settings.RedisConnectionString, true);
-
-                confOptions.ResolveDns = true;
-
-                return ConnectionMultiplexer.Connect(confOptions);
-            });
-
+            services.Configure<TemplateDatabaseSettings>(configuration.GetSection(nameof(TemplateDatabaseSettings)));
+            
+            services.AddSingleton<ITemplateDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<TemplateDatabaseSettings>>().Value);
+            
             return services;
         }
     }

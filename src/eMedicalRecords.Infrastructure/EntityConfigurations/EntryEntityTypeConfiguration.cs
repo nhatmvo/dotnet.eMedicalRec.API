@@ -10,7 +10,7 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Entry> builder)
         {
-            builder.ToTable("mr_entries");
+            builder.ToTable("document_entry");
 
             builder.HasKey(b => b.Id);
 

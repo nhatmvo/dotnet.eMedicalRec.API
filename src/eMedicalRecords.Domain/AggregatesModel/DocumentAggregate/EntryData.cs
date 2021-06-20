@@ -6,7 +6,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
 {
     public class EntryData : Entity
     {
-        private Guid _sectionId;
+        private Guid _elementId;
 
         private Guid _entryId;
         public Entry Entry { get; private set; }
@@ -15,20 +15,11 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         
         protected EntryData() { }
 
-        public EntryData(Guid entryId, Guid sectionId, string value)
+        public EntryData(Guid entryId, Guid elementId, string value)
         {
             _entryId = entryId;
-            _sectionId = sectionId;
+            _elementId = elementId;
             _value = value;
-            AddEntrySubmittedDomainEvent();
         }
-
-        public void AddEntrySubmittedDomainEvent()
-        {
-            AddDomainEvent(new EntryDataSubmittedDomainEvent(this, _sectionId, _value));
-        }
-        
-        
-        
     }
 }
