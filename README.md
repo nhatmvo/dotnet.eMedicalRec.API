@@ -14,13 +14,13 @@ Though there is a lot of ideas and small techniques are used for this project, b
 
 ### EAV Model
 
-The idea behind having Dynamic Template comes from the design idea of eCommerce's product portfolio a.k.a [EAV-model](https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model)). Terminology from EAV-model suits with Dynamic Template by: 
+The idea behind having Dynamic Template comes from the design idea of eCommerce's product portfolio a.k.a [EAV-model](https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model). Terminology from EAV-model suits with Dynamic Template by: 
 
 ![](documents/architectures/erd.jpg)
 
 ### CQRS Pattern
 
-One of the biggest drawbacks when having EAV-model within a system is performance, because getting data out takes a lot of table joins operation. Having [CQRS pattern]("https://martinfowler.com/bliki/CQRS.html") is quite a good choice to come along with EAV-model (only CQRS, not Event Sourcing) since this pattern provide performance when seperate application into 2 seperate read/write models. Storing dyamic form inside RDBMS using EAV can only leverage ACID compliant, meanwhile, NoSQL Database (in this application, it's MongoDB) can improve the speed of read when recursive structures stored within RDBMS are converted into NoSQL structures.
+One of the biggest drawbacks when having EAV-model within a system is performance, because getting data out takes a lot of table joins operation. Having [CQRS pattern](https://martinfowler.com/bliki/CQRS.html) is quite a good choice to come along with EAV-model (only CQRS, not Event Sourcing) since this pattern provide performance when seperate application into 2 seperate read/write models. Storing dyamic form inside RDBMS using EAV can only leverage ACID compliant, meanwhile, NoSQL Database (in this application, it's MongoDB) can improve the speed of read when recursive structures stored within RDBMS are converted into NoSQL structures.
 
 ![](documents/architectures/cqrs.jpg)
 
