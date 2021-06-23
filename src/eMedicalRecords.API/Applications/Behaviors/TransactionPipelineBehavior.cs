@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using eMedicalRecords.API.Infrastructures.Extensions;
 using eMedicalRecords.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,7 @@ namespace eMedicalRecords.API.Applications.Behaviors
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             var response = default(TResponse);
-            // TODO: CreateDocumentCommand GetDynamicTypeName function in order to get generic params name
-            var typeName = string.Empty;
+            var typeName = request.GetGenericTypeName();
             try
             {
                 if (_context.HasActiveTransaction())

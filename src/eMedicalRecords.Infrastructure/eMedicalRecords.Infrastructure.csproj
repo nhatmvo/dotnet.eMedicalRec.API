@@ -18,10 +18,17 @@
       <PackageReference Include="Npgsql" Version="5.0.4" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
       <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\eMedicalRecords.Domain\eMedicalRecords.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.IdentityModel.Tokens, Version=6.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <HintPath>C:\Users\minhn\.nuget\packages\microsoft.identitymodel.tokens\6.11.1\lib\netstandard2.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

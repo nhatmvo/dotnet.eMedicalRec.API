@@ -8,6 +8,7 @@ using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
 using eMedicalRecords.Domain.SeedWorks;
 using eMedicalRecords.Infrastructure.Configurations;
 using eMedicalRecords.Infrastructure.EntityConfigurations;
+using eMedicalRecords.Infrastructure.Securities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -31,6 +32,7 @@ namespace eMedicalRecords.Infrastructure
         public DbSet<EntryData> SectionData { get; set; }
         public DbSet<IdentityType> IdentityTypes { get; set; }
         public DbSet<Patient> Patients { get; set; }
+        public DbSet<AccountModel> Accounts { get; set; }
         
         
         public MedicalRecordContext(DbContextOptions<MedicalRecordContext> options) : base(options) { }
@@ -43,8 +45,7 @@ namespace eMedicalRecords.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.ApplyConfiguration(new ClientRequestEntityTypeConfiguration());
+            
             modelBuilder.ApplyConfiguration(new ElementBaseEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ElementTextEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ElementTypeEntityTypeConfiguration());
@@ -56,6 +57,7 @@ namespace eMedicalRecords.Infrastructure
             modelBuilder.ApplyConfiguration(new EntryDataEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new IdentityTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new AccountEntityTypeConfiguration());
         }
 
         public bool HasActiveTransaction() => _currentTransaction != null;

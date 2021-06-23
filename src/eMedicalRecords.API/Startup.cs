@@ -1,12 +1,12 @@
 using System.Reflection;
 using Autofac;
 using eMedicalRecords.API.Infrastructures.AutofacModules;
+using eMedicalRecords.API.Infrastructures.Middlewares;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace eMedicalRecords.API
 {
@@ -26,6 +26,7 @@ namespace eMedicalRecords.API
                 .AddMediatR(Assembly.GetExecutingAssembly())
                 .AddCustomDbContext(Configuration)
                 .AddCustomHostedService()
+                .AddJwt()
                 .AddCustomHealthCheck(Configuration);
 
         }
@@ -37,16 +38,11 @@ namespace eMedicalRecords.API
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            //app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

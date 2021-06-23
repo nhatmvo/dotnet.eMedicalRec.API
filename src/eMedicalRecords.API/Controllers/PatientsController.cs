@@ -2,7 +2,9 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using eMedicalRecords.API.Infrastructures.Extensions;
+using eMedicalRecords.Infrastructure.Securities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -14,6 +16,7 @@ namespace eMedicalRecords.API.Controllers
     
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
     public class PatientsController : ControllerBase
     {
         private readonly IMediator _mediator;

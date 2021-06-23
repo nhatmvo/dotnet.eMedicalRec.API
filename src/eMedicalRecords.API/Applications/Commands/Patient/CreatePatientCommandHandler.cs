@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using eMedicalRecords.Infrastructure.Idempotency;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

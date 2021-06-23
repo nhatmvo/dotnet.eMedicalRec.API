@@ -1,7 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using eMedicalRecords.Domain.AggregatesModel.PatientAggregate;
-using eMedicalRecords.Infrastructure.Idempotency;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

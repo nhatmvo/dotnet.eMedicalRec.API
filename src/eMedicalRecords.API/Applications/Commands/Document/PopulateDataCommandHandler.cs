@@ -61,6 +61,6 @@ namespace eMedicalRecords.API.Applications.Commands.Document
                     elementRadioButton?.ValidatePopulatedData();
                     break;
             }
-        }
+        }   
     }
 }

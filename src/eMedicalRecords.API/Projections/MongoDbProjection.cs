@@ -71,6 +71,7 @@ namespace eMedicalRecords.API.Projections
         
         public void CreateSubscription()
         {
+            //TODO: Add startup store procedure as well as trigger for Projection Engine (might run as part of the migration process)
         }
     }
 }

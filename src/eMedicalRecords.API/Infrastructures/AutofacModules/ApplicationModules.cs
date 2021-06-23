@@ -1,5 +1,6 @@
 using Autofac;
 using eMedicalRecords.API.Projections;
+using eMedicalRecords.Infrastructure.Securities;
 using eMedicalRecords.Infrastructure.Services;
 
 namespace eMedicalRecords.API.Infrastructures.AutofacModules
@@ -32,6 +33,14 @@ namespace eMedicalRecords.API.Infrastructures.AutofacModules
             builder.RegisterType<MongoDbProjection>()
                 .As<IStateProjection>()
                 .SingleInstance();
+
+            builder.RegisterType<PasswordHasher>()
+                .As<IPasswordHasher>()
+                .InstancePerDependency();
+
+            builder.RegisterType<JwtTokenGenerator>()
+                .As<IJwtTokenGenerator>()
+                .InstancePerDependency();
         }
     }
 }
