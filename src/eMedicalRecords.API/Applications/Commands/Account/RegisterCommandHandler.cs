@@ -30,8 +30,7 @@ namespace eMedicalRecords.API.Applications.Commands.Account
             if (isExist)
                 throw new ArgumentException($"Username: {request.Username} has already existed in the system");
 
-            var requestCreatedSuperuser = _context.Accounts.Any(a =>
-                string.Equals(a.Role, request.Username, StringComparison.InvariantCultureIgnoreCase));
+            var requestCreatedSuperuser = _context.Accounts.Any(a => a.Role.Equals(request.Role));
             if (requestCreatedSuperuser)
                 throw new DataException($"SuperUser role is unique within the system! Cannot create username: {request.Username} w/ role as SuperUser");
             

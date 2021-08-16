@@ -7,7 +7,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
 {
     public class ElementCheckbox : ElementBase
     {
-        private readonly List<string> _options;
+        private List<string> _options;
         private List<string> _values;
 
         public ElementCheckbox(string name, int elementTypeId, string tooltip, string description, Guid? parentElementId, List<string> options) :

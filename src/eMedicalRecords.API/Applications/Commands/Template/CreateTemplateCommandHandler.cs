@@ -55,6 +55,9 @@ namespace eMedicalRecords.API.Applications.Commands.Template
                     case (int) ElementTypeEnum.Text:
                         elementToAdd = InitText(element, parentSectionId);
                         break;
+                    default:
+                        elementToAdd = InitBase(element, parentSectionId);
+                        break;
                 }
                 result.Add(elementToAdd);
                 
@@ -89,5 +92,14 @@ namespace eMedicalRecords.API.Applications.Commands.Template
             elementText.SetValidationProperties(textProperty.MinimumLength, textProperty.MaximumLength, textProperty.TextRestrictionLevel, textProperty.CustomExpression);
             return elementText;
         }
+
+        private ElementBase InitBase(ElementProperty elementRequest, Guid? parentElementId)
+        {
+            var elementBase = new ElementBase(elementRequest.Name, elementRequest.ElementTypeId,
+                elementRequest.Tooltip, elementRequest.Description, parentElementId);
+            return elementBase;
+        }
+        
+        
     }
 }

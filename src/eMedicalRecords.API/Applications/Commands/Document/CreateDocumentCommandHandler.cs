@@ -30,7 +30,7 @@ namespace eMedicalRecords.API.Applications.Commands.Document
             if (patient == null)
                 throw new Exception();
 
-            var documentToCreate = new Document(request.Name, request.DepartmentName, patient.Id);
+            var documentToCreate = new Document(request.DepartmentName, patient.Id);
             _logger.LogInformation("----- Creating document for patient {PatientNo}", patient.PatientNo);
             await _documentRepository.Add(documentToCreate);
             

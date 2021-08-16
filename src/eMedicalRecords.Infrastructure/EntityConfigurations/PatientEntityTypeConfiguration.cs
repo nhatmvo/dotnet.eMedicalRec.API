@@ -23,6 +23,10 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
             
             builder.HasIndex("_identityNo")
                 .IsUnique();
+
+            builder.Property(b => b.PatientNo)
+                .HasColumnName("patient_document_no")
+                .IsRequired();
             
             builder.Property<string>("_identityNo")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
@@ -34,21 +38,16 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 a.WithOwner();
             });
 
-            builder.Property<string>("_firstName")
+            builder.Property<string>("_name")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("first_name")
+                .HasColumnName("name")
                 .IsRequired();
             
-            builder.Property<string>("_middleName")
+            builder.Property<bool>("_gender")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("middle_name")
-                .IsRequired(false);
-            
-            builder.Property<string>("_lastName")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("last_name")
+                .HasColumnName("gender")
                 .IsRequired();
-            
+
             builder.Property<string>("_email")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("email")
@@ -69,9 +68,19 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("has_insurance")
                 .IsRequired();
             
-            builder.Property<string>("_description")
+            builder.Property<DateTime>("_admissionDate")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("description")
+                .HasColumnName("admission_date")
+                .IsRequired();
+            
+            builder.Property<DateTime>("_surgeryDate")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("surgery_date")
+                .IsRequired();
+            
+            builder.Property<DateTime>("_examinationDate")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("examination_date")
                 .IsRequired();
         }
     }

@@ -25,6 +25,7 @@ namespace eMedicalRecords.API.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Route("login")]
         public async Task<ActionResult<LoginDTO>> Login([FromBody] LoginCommand loginCommand)
         {
             try
@@ -41,8 +42,9 @@ namespace eMedicalRecords.API.Controllers
         [HttpPost]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
-        [Authorize(Roles = "superuser")]
+        [Route("register")]
+        // [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
+        // [Authorize(Roles = "superuser")]
         public async Task<ActionResult<LoginDTO>> Register([FromBody] RegisterCommand registerCommand)
         {
             return await _mediator.Send(registerCommand);

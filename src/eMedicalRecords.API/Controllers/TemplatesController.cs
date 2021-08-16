@@ -5,6 +5,7 @@ using eMedicalRecords.Infrastructure.Securities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 namespace eMedicalRecords.API.Controllers
 {
@@ -13,7 +14,7 @@ namespace eMedicalRecords.API.Controllers
     
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
+    // [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
     public class TemplatesController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -38,12 +39,12 @@ namespace eMedicalRecords.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(Template), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(TemplateDTO), (int) HttpStatusCode.OK)]
         [ActionName("GetTemplateAsync")]
-        public async Task<ActionResult<Template>> GetTemplateAsync(string id)
+        public async Task<ActionResult<TemplateDTO>> GetTemplateAsync(Guid id)
         {
-            return await _templateQueries.GetTemplateAsync(Guid.Parse(id));
+            var result = await _templateQueries.GetTemplateAsync(id);
+            return TemplateDTO.FromTemplateBson(result);
         }
-        
     }
 }

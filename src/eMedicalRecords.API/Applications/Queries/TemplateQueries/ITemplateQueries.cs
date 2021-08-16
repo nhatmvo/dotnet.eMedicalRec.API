@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
+using MongoDB.Bson;
 
 namespace eMedicalRecords.API.Applications.Queries.TemplateQueries
 {
     public interface ITemplateQueries
     {
-        public Task<Template> GetTemplateAsync(Guid id);
+        public Task<BsonDocument> GetTemplateAsync(Guid id);
     }
 }

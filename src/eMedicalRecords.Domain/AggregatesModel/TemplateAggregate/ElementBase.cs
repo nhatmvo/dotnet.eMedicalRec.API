@@ -4,7 +4,7 @@ using eMedicalRecords.Domain.SeedWorks;
 
 namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
 {
-    public abstract class ElementBase : Entity
+    public class ElementBase : Entity
     {
         private Guid _templateId;
 
@@ -18,7 +18,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
         public ElementType ElementType { get; set; }
         private int _elementTypeId;
 
-        protected ElementBase(string name, int elementTypeId, string tooltip, string description, Guid? parentElementId)
+        public ElementBase(string name, int elementTypeId, string tooltip, string description, Guid? parentElementId)
         {
             base.Id = Guid.NewGuid();
             _parentElementId = parentElementId;
@@ -27,5 +27,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
             _elementTypeId = elementTypeId;
             _description = description;
         }
+
+        public Guid? GetParentElementId() => _parentElementId;
     }
 }

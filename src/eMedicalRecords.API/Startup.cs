@@ -2,11 +2,13 @@ using System.Reflection;
 using Autofac;
 using eMedicalRecords.API.Infrastructures.AutofacModules;
 using eMedicalRecords.API.Infrastructures.Middlewares;
+using eMedicalRecords.Infrastructure.Configurations;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace eMedicalRecords.API
 {
@@ -28,12 +30,25 @@ namespace eMedicalRecords.API
                 .AddCustomHostedService()
                 .AddJwt()
                 .AddCustomHealthCheck(Configuration);
+            
+            services.AddCors();
 
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule<ApplicationModules>();
-            builder.RegisterModule<MediatorModules>();
+            var dbConfiguration = Configuration.Get<DbConfiguration>();
+            var npgsqlBuilder = new NpgsqlConnectionStringBuilder()
+            {
+                Host = dbConfiguration.PostgresHostname,
+                Database = dbConfiguration.PostgresDatabase,
+                Username = dbConfiguration.PostgresUsername,
+                Password = dbConfiguration.PostgresPassword,
+                Port = int.Parse(dbConfiguration.PostgresPort)
+            };
+
+            
+            builder.RegisterModule(new ApplicationModules(npgsqlBuilder.ConnectionString));
+            builder.RegisterModule(new MediatorModules());
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,6 +58,12 @@ namespace eMedicalRecords.API
             app.UseAuthorization();
             
             app.UseMiddleware<ErrorHandlingMiddleware>();
+            
+            app.UseCors(builder =>
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

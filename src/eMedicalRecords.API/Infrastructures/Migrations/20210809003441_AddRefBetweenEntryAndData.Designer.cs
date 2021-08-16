@@ -11,8 +11,8 @@ using eMedicalRecords.Infrastructure;
 namespace eMedicalRecords.Infrastructure.Migrations
 {
     [DbContext(typeof(MedicalRecordContext))]
-    [Migration("20210623014133_AddAccountForAuthentication")]
-    partial class AddAccountForAuthentication
+    [Migration("20210809003441_AddRefBetweenEntryAndData")]
+    partial class AddRefBetweenEntryAndData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,11 +33,17 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_date");
 
+                    b.Property<Guid>("_patientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("patient_id");
+
                     b.Property<DateTime?>("_updatedDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("updated_date");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("_patientId");
 
                     b.ToTable("document");
                 });
@@ -46,30 +52,24 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("DocumentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("_description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<Guid>("_headingSetId")
                         .HasColumnType("uuid")
-                        .HasColumnName("heading_set_id");
+                        .HasColumnName("id");
 
-                    b.Property<string>("_name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                    b.Property<DateTime>("_createdDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_date");
+
+                    b.Property<Guid>("_documentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("document_id");
 
                     b.Property<Guid>("_templateId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("template_id");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("_documentId");
 
                     b.HasIndex("_templateId");
 
@@ -83,16 +83,16 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("EntryId1")
-                        .HasColumnType("uuid");
+                    b.Property<Guid>("_elementId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("element_id");
 
                     b.Property<Guid>("_entryId")
                         .HasColumnType("uuid")
                         .HasColumnName("entry_id");
 
-                    b.Property<Guid>("_sectionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("section_id");
+                    b.Property<Guid?>("_entry_id")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("_value")
                         .IsRequired()
@@ -101,11 +101,11 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EntryId1");
+                    b.HasIndex("_elementId");
 
                     b.HasIndex("_entryId");
 
-                    b.HasIndex("_sectionId");
+                    b.HasIndex("_entry_id");
 
                     b.ToTable("document_entry_data");
                 });
@@ -137,26 +137,30 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("PatientNo")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("patient_document_no");
+
+                    b.Property<DateTime>("_admissionDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("admission_date");
 
                     b.Property<DateTime>("_dateOfBirth")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("date_of_birth");
-
-                    b.Property<string>("_description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
 
                     b.Property<string>("_email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
 
-                    b.Property<string>("_firstName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("first_name");
+                    b.Property<DateTime>("_examinationDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("examination_date");
+
+                    b.Property<bool>("_gender")
+                        .HasColumnType("boolean")
+                        .HasColumnName("gender");
 
                     b.Property<bool>("_hasInsurance")
                         .HasColumnType("boolean")
@@ -167,19 +171,19 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("identity_no");
 
-                    b.Property<string>("_lastName")
+                    b.Property<string>("_name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("last_name");
-
-                    b.Property<string>("_middleName")
-                        .HasColumnType("text")
-                        .HasColumnName("middle_name");
+                        .HasColumnName("name");
 
                     b.Property<string>("_phoneNumber")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("phone_number");
+
+                    b.Property<DateTime>("_surgeryDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("surgery_date");
 
                     b.HasKey("Id");
 
@@ -365,11 +369,22 @@ namespace eMedicalRecords.Infrastructure.Migrations
                     b.ToTable("template_element_text");
                 });
 
+            modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Document", b =>
+                {
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.PatientAggregate.Patient", null)
+                        .WithMany()
+                        .HasForeignKey("_patientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Entry", b =>
                 {
                     b.HasOne("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Document", null)
                         .WithMany("DocumentEntries")
-                        .HasForeignKey("DocumentId");
+                        .HasForeignKey("_documentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.Template", null)
                         .WithMany()
@@ -380,9 +395,11 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
             modelBuilder.Entity("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.EntryData", b =>
                 {
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Entry", null)
-                        .WithMany("RecordValues")
-                        .HasForeignKey("EntryId1");
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", null)
+                        .WithMany()
+                        .HasForeignKey("_elementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Entry", "Entry")
                         .WithMany()
@@ -390,11 +407,9 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.TemplateAggregate.ElementBase", null)
-                        .WithMany()
-                        .HasForeignKey("_sectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("eMedicalRecords.Domain.AggregatesModel.DocumentAggregate.Entry", null)
+                        .WithMany("RecordValues")
+                        .HasForeignKey("_entry_id");
 
                     b.Navigation("Entry");
                 });

@@ -16,20 +16,21 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
 
             builder.Ignore(b => b.DomainEvents);
 
-            builder.Property<Guid>("_headingSetId")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("heading_set_id")
-                .IsRequired();
+            builder.Property(b => b.Id)
+                .HasColumnName("id");
 
-            builder.Property<string>("_name")
+            builder.Property<Guid>("_templateId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("name")
+                .HasColumnName("template_id")
                 .IsRequired();
-
-            builder.Property<string>("_description")
+            
+            builder.Property<Guid>("_documentId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("description")
-                .IsRequired(false);
+                .HasColumnName("document_id");
+
+            builder.Property<DateTime>("_createdDate")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("created_date");
 
             var navigation = builder.Metadata.FindNavigation(nameof(Entry.RecordValues));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
@@ -37,6 +38,10 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
             builder.HasOne<Template>()
                 .WithMany()
                 .HasForeignKey("_templateId");
+
+            builder.HasMany<EntryData>()
+                .WithOne(b => b.Entry)
+                .HasForeignKey("_entryId");
         }
     }
 }

@@ -6,7 +6,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
 {
     public class ElementRadioButton : ElementBase
     {
-        private readonly List<string> _options;
+        private List<string> _options;
 
         private string _value;
         

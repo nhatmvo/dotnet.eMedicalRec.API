@@ -57,14 +57,15 @@ namespace eMedicalRecords.API.Projections
             {
                 case "INSERT":
                     var templateToInsert = await _templateRepository.GetTemplateById(templateIdChanged);
-                    await _templateService.AddTemplateFromReadDb(templateToInsert);
+                    templateToInsert.RemoveUpperLevelStructure();
+                    await _templateService.AddTemplateAsync(templateToInsert);
                     break;
                 case "UPDATE":
                     var templateToUpdate = await _templateRepository.GetTemplateById(templateIdChanged);
-                    await _templateService.UpdateTemplateFromReadDb(templateIdChanged, templateToUpdate);
+                    await _templateService.UpdateTemplateAsync(templateIdChanged, templateToUpdate);
                     break;
                 case "DELETE":
-                    await _templateService.DeleteTemplateFromReadDb(templateIdChanged);
+                    await _templateService.DeleteTemplateAsync(templateIdChanged);
                     break;
             }
         }

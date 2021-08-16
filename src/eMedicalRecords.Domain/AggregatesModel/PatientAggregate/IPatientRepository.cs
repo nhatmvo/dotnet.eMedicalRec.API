@@ -9,6 +9,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.PatientAggregate
         Task<Patient> FindPatientByIdentityNo(string identityNo, int identityTypeId);
         Task<Patient> FindPatientByPatientNo(string patientNo);
         Task<Patient> AddAsync(Patient patient);
+        Task<Patient> FindPatientById(Guid id);
         Patient Update(Patient patient);
     }
 }

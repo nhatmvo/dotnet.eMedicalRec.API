@@ -1,5 +1,8 @@
 using Autofac;
+using eMedicalRecords.API.Applications.Queries.DocumentQueries;
+using eMedicalRecords.API.Applications.Queries.PatientQueries;
 using eMedicalRecords.API.Projections;
+using eMedicalRecords.Domain.AggregatesModel.PatientAggregate;
 using eMedicalRecords.Infrastructure.Securities;
 using eMedicalRecords.Infrastructure.Services;
 
@@ -12,6 +15,13 @@ namespace eMedicalRecords.API.Infrastructures.AutofacModules
     
     public class ApplicationModules : Module
     {
+        public string QueryConnectionString { get; }
+
+        public ApplicationModules(string queryConnectionString)
+        {
+            QueryConnectionString = queryConnectionString;
+        }
+        
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<DocumentRepository>()
@@ -24,6 +34,18 @@ namespace eMedicalRecords.API.Infrastructures.AutofacModules
 
             builder.RegisterType<TemplateQueries>()
                 .As<ITemplateQueries>()
+                .InstancePerDependency();
+
+            builder.Register(b => new PatientQueries(QueryConnectionString))
+                .As<IPatientQueries>()
+                .InstancePerLifetimeScope();
+
+            builder.Register(b => new DocumentQueries(QueryConnectionString))
+                .As<IDocumentQueries>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<PatientRepository>()
+                .As<IPatientRepository>()
                 .InstancePerDependency();
 
             builder.RegisterType<TemplateService>()

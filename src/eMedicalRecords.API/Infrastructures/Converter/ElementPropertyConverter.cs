@@ -15,18 +15,13 @@ namespace eMedicalRecords.API.Infrastructures.Converter
             {
                 case (int) ElementTypeEnum.Checkbox:
                     return new CheckboxProperty();
-                case (int) ElementTypeEnum.Image:
-                    return new ImageProperty();
-                case (int) ElementTypeEnum.Label:
-                    return new LabelProperty();
                 case (int) ElementTypeEnum.Text:
+                case (int) ElementTypeEnum.TextArea:
                     return new TextProperty();
-                case (int) ElementTypeEnum.Video:
-                    return new VideoProperty();
                 case (int) ElementTypeEnum.RadioButton:
                     return new RadiobuttonProperty();
                 default:
-                    return null;
+                    return new LabelProperty();
             }
         }
     }

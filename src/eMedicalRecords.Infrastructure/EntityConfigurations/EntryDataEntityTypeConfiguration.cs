@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using eMedicalRecords.Domain.AggregatesModel.DocumentAggregate;
 using eMedicalRecords.Domain.AggregatesModel.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,9 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
             builder.HasKey(b => b.Id);
             builder.Property(b => b.Id).HasColumnName("id");
             
-            builder.Property<Guid>("_sectionId")
+            builder.Property<Guid>("_elementId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("section_id")
+                .HasColumnName("element_id")
                 .IsRequired();
 
             builder.Property<Guid>("_entryId")
@@ -25,14 +26,14 @@ namespace eMedicalRecords.Infrastructure.EntityConfigurations
                 .HasColumnName("entry_id")
                 .IsRequired();
             
-            builder.Property<string>("_value")
+            builder.Property<List<string>>("_values")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("value")
+                .HasColumnName("values")
                 .IsRequired();
 
             builder.HasOne<ElementBase>()
                 .WithMany()
-                .HasForeignKey("_sectionId")
+                .HasForeignKey("_elementId")
                 .IsRequired();
 
             builder.HasOne(b => b.Entry)

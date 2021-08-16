@@ -7,10 +7,11 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
     public class Entry : Entity
     {
         private Guid _templateId;
-
-        private string _name;
-        private string _description;
+        
+        private DateTime _createdDate;
         public override Guid Id { get; protected set; } = Guid.NewGuid();
+
+        public string GetCreatedDateAsString => _createdDate.ToString("yy-MM-dd");
 
         private List<EntryData> _recordValues;
 
@@ -18,11 +19,10 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
 
         protected Entry() { }
 
-        public Entry(Guid templateId, string name, string description)
+        public Entry(Guid templateId)
         {
             _templateId = templateId;
-            _name = name ?? DateTime.UtcNow.ToString("d");
-            _description = description;
+            _createdDate = DateTime.UtcNow;
         }
 
     }

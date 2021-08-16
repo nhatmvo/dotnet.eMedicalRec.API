@@ -52,6 +52,7 @@ namespace eMedicalRecords.Infrastructure.Repositories
                 .Include(t => t.Elements)
                 .ThenInclude(e => e.ChildElements)
                 .FirstOrDefaultAsync(t => t.Id.Equals(templateId));
+
             if (template == null)
                 throw new RecordNotFoundException($"Cannot find template with id: ${templateId}");
             return template;

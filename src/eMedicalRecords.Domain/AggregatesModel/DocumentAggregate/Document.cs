@@ -13,16 +13,16 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         private DateTime? _updatedDate;
 
         private Guid _patientId;
-        
-        private readonly List<Entry> _documentEntries;
+        public Guid GetPatientId => _patientId;
+
+        private List<Entry> _documentEntries;
 
         public List<Entry> DocumentEntries => _documentEntries;
 
         protected Document() { }
 
-        public Document(string name, string departmentName, Guid patientId)
+        public Document(string departmentName, Guid patientId)
         {
-            _name = name;
             _departmentName = departmentName;
             _createdDate = DateTime.UtcNow;
             _patientId = patientId;
@@ -31,6 +31,8 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
 
         public void AddEntry(Entry entry)
         {
+            if (_documentEntries == null)
+                _documentEntries = new List<Entry>();
             _documentEntries.Add(entry);
             _updatedDate = DateTime.UtcNow;
         }

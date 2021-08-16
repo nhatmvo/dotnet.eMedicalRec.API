@@ -9,16 +9,18 @@ namespace eMedicalRecords.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "document",
+                name: "account",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    updated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    username = table.Column<string>(type: "text", nullable: false),
+                    salt = table.Column<byte[]>(type: "bytea", nullable: false),
+                    hash = table.Column<byte[]>(type: "bytea", nullable: false),
+                    role = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_document", x => x.id);
+                    table.PrimaryKey("PK_account", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -31,19 +33,6 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_identity_type", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "request",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: true),
-                    time = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_request", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,21 +65,22 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    PatientNo = table.Column<string>(type: "text", nullable: true),
+                    patient_document_no = table.Column<string>(type: "text", nullable: false),
                     PatientAddress_Country = table.Column<string>(type: "text", nullable: true),
                     PatientAddress_City = table.Column<string>(type: "text", nullable: true),
                     PatientAddress_District = table.Column<string>(type: "text", nullable: true),
                     PatientAddress_AddressLine = table.Column<string>(type: "text", nullable: true),
                     IdentityTypeId = table.Column<int>(type: "integer", nullable: true),
+                    admission_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     date_of_birth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: false),
-                    first_name = table.Column<string>(type: "text", nullable: false),
+                    examination_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    gender = table.Column<bool>(type: "boolean", nullable: false),
                     has_insurance = table.Column<bool>(type: "boolean", nullable: false),
                     identity_no = table.Column<string>(type: "text", nullable: false),
-                    last_name = table.Column<string>(type: "text", nullable: false),
-                    middle_name = table.Column<string>(type: "text", nullable: true),
-                    phone_number = table.Column<string>(type: "text", nullable: false)
+                    name = table.Column<string>(type: "text", nullable: false),
+                    phone_number = table.Column<string>(type: "text", nullable: false),
+                    surgery_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,34 +91,6 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         principalTable: "identity_type",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "document_entry",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    DocumentId = table.Column<Guid>(type: "uuid", nullable: true),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    heading_set_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    _templateId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_document_entry", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_document_entry_document_DocumentId",
-                        column: x => x.DocumentId,
-                        principalTable: "document",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_document_entry_template__templateId",
-                        column: x => x._templateId,
-                        principalTable: "template",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,35 +129,22 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "document_entry_data",
+                name: "document",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    entry_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    EntryId1 = table.Column<Guid>(type: "uuid", nullable: true),
-                    section_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    value = table.Column<string>(type: "text", nullable: false)
+                    created_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    patient_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    updated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_document_entry_data", x => x.id);
+                    table.PrimaryKey("PK_document", x => x.id);
                     table.ForeignKey(
-                        name: "FK_document_entry_data_document_entry_entry_id",
-                        column: x => x.entry_id,
-                        principalTable: "document_entry",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_document_entry_data_document_entry_EntryId1",
-                        column: x => x.EntryId1,
-                        principalTable: "document_entry",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_document_entry_data_template_element_base_section_id",
-                        column: x => x.section_id,
-                        principalTable: "template_element_base",
-                        principalColumn: "element_base_id",
+                        name: "FK_document_patient_patient_id",
+                        column: x => x.patient_id,
+                        principalTable: "patient",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -256,6 +205,78 @@ namespace eMedicalRecords.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "document_entry",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DocumentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    heading_set_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    _templateId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_document_entry", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_document_entry_document_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "document",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_document_entry_template__templateId",
+                        column: x => x._templateId,
+                        principalTable: "template",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "document_entry_data",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    entry_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntryId1 = table.Column<Guid>(type: "uuid", nullable: true),
+                    section_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    value = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_document_entry_data", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_document_entry_data_document_entry_entry_id",
+                        column: x => x.entry_id,
+                        principalTable: "document_entry",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_document_entry_data_document_entry_EntryId1",
+                        column: x => x.EntryId1,
+                        principalTable: "document_entry",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_document_entry_data_template_element_base_section_id",
+                        column: x => x.section_id,
+                        principalTable: "template_element_base",
+                        principalColumn: "element_base_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_account_username",
+                table: "account",
+                column: "username",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_document_patient_id",
+                table: "document",
+                column: "patient_id");
+
             migrationBuilder.CreateIndex(
                 name: "IX_document_entry__templateId",
                 table: "document_entry",
@@ -293,9 +314,9 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 column: "IdentityTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_patient_PatientNo",
+                name: "IX_patient_patient_document_no",
                 table: "patient",
-                column: "PatientNo",
+                column: "patient_document_no",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -317,13 +338,10 @@ namespace eMedicalRecords.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "account");
+
+            migrationBuilder.DropTable(
                 name: "document_entry_data");
-
-            migrationBuilder.DropTable(
-                name: "patient");
-
-            migrationBuilder.DropTable(
-                name: "request");
 
             migrationBuilder.DropTable(
                 name: "template_element_checkbox");
@@ -338,9 +356,6 @@ namespace eMedicalRecords.Infrastructure.Migrations
                 name: "document_entry");
 
             migrationBuilder.DropTable(
-                name: "identity_type");
-
-            migrationBuilder.DropTable(
                 name: "template_element_base");
 
             migrationBuilder.DropTable(
@@ -351,6 +366,12 @@ namespace eMedicalRecords.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "template");
+
+            migrationBuilder.DropTable(
+                name: "patient");
+
+            migrationBuilder.DropTable(
+                name: "identity_type");
         }
     }
 }

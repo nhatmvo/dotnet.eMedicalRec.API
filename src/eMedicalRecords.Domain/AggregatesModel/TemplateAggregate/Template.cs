@@ -12,7 +12,7 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
         private string _description;
         private bool _isDirty;
 
-        private readonly List<ElementBase> _elements;
+        private List<ElementBase> _elements;
         public IReadOnlyCollection<ElementBase> Elements => _elements.AsReadOnly();
         public sealed override Guid Id { get; protected set; } = Guid.NewGuid();
 
@@ -31,6 +31,11 @@ namespace eMedicalRecords.Domain.AggregatesModel.TemplateAggregate
         public void WrapUp()
         {
             AddDomainEvent(new TemplateAddedDomainEvent(this, Id.ToString()));
+        }
+
+        public void RemoveUpperLevelStructure()
+        {
+            _elements.RemoveAll(e => e.GetParentElementId() != null);
         }
     }
 }

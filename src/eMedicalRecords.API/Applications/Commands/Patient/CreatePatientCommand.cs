@@ -8,9 +8,9 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
     {
         [DataMember] public string IdentityNo { get; set; }
         [DataMember] public int IdentityTypeId { get; set; }
-        [DataMember] public string FirstName { get; set; }
-        [DataMember] public string MiddleName { get; set; }
-        [DataMember] public string LastName { get; set; }
+        [DataMember] public string HospitalDocumentId { get; set; }
+        [DataMember] public string Name { get; set; }
+        [DataMember] public string Gender { get; set;  }
         [DataMember] public string Country { get; set; }
         [DataMember] public string City { get; set; }
         [DataMember] public string District { get; set; }
@@ -19,6 +19,8 @@ namespace eMedicalRecords.API.Applications.Commands.Patient
         [DataMember] public string Email { get; set; }
         [DataMember] public DateTime DateOfBirth { get; set; }
         [DataMember] public bool HasInsurance { get; set; }
-        [DataMember] public string Description { get; set; }
+        [DataMember] public DateTime AdmissionDate { get; set; }
+        [DataMember] public DateTime SurgeryDate { get; set; }
+        [DataMember] public DateTime ExaminationDate { get; set; }
     }
 }

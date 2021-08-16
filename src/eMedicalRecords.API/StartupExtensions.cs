@@ -74,6 +74,7 @@ namespace eMedicalRecords.API
             
             return services;
         }
+        
 
         public static IServiceCollection AddJwt(this IServiceCollection services)
         {

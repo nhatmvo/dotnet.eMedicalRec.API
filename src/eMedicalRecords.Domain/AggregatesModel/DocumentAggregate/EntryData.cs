@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using eMedicalRecords.Domain.Events;
 using eMedicalRecords.Domain.SeedWorks;
 
@@ -9,17 +10,18 @@ namespace eMedicalRecords.Domain.AggregatesModel.DocumentAggregate
         private Guid _elementId;
 
         private Guid _entryId;
-        public Entry Entry { get; private set; }
 
-        private string _value;
+        private List<string> _values;
         
         protected EntryData() { }
 
-        public EntryData(Guid entryId, Guid elementId, string value)
+        public EntryData(Entry entry, Guid elementId, List<string> values)
         {
-            _entryId = entryId;
+            Entry = entry;
             _elementId = elementId;
-            _value = value;
+            _values = values;
         }
+        
+        public virtual Entry Entry { get; set; }
     }
 }
