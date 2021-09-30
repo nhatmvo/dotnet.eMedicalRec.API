@@ -1,5 +1,4 @@
 ## About The Project
-Electronic Medical Records for VD hospital. Reduce time when for old patient's records lookup, hence improve the ability to continuous examination and treatment 
 
 In order to create the flexibility of medical record template for each department within hospital, several techniques are applied to create dynamic template. So that, when requirements within a department is changed (add new checkbox, add new field, etc...) instead of having developers change the form inside the database structure, refactor all over upper layers, this application gives doctor/user the ability to define templates by themselves.
 
